@@ -8,4 +8,4 @@ Take your time with the easy problems, use them to build up your skills, and whe
 
 Let's warmup.
 
-1. I may solve a problem with multiple approaches.
+1. I'm going to solve a problem with multiple approaches.

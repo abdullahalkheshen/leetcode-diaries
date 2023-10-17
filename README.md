@@ -2,4 +2,4 @@
 
 # **`"A LeetCode a Day Keeps Unemployment Away."`**
 
-![Leetcode+Consistency](/Leetcod--Diaries.png)
+![Leetcode+Consistency](/Leetcode_diaries.png)

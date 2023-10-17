@@ -31,8 +31,7 @@ If we cannot find one of the letters, return False. Otherwise, return True after
 
 Big-O:
 Time Complexity: O(n), Iterate over "n" chars in sentence for 26 times, with each iteration taking at most O(n).
-Space Complexity: O(1), Just need to find letters one by one.
-*/
+Space Complexity: O(1), Just need to find letters one by one. */
 
 #include <iostream>
 #include <unordered_set>
@@ -128,7 +127,7 @@ public:
     }
 };
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+            // ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Approach #4 Map
 

@@ -8,4 +8,10 @@ Take your time with the easy problems, use them to build up your skills, and whe
 
 Let's warmup.
 
-1. I'm going to solve a problem with multiple approaches.
+I'm going to solve a problem with multiple approaches.
+
+Problems:
+1. 217-contains_duplicate.cpp
+2. 1832-panagram.cpp
+3. 69-sqrt(x).cpp
+4. 

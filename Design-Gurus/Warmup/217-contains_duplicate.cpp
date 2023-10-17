@@ -25,8 +25,7 @@ Nested for loop to compare each and every element in the vector.
 
 Big-O:
 Time complexity: O(n2) "n" is the number of elements in the vector/array. Here n2 because we're comparing each element with all other elements ..
-Space complexity: O(1) we only need few variables to store the indicies, which takes constant space.
-*/
+Space complexity: O(1) we only need few variables to store the indicies, which takes constant space.*/
 
 #include <iostream>
 #include <vector>
@@ -48,7 +47,7 @@ public:
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach #2 (Sorting) [Accepted]
+// Approach #2 Sorting [Accepted]
 /*
 Intuition:
 If there are any duplicate integers, they will be consecutive after sorting.

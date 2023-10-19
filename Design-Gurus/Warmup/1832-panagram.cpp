@@ -92,7 +92,7 @@ public:
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach 3 Vector/Array as Counter
+// Approach 3 Frequency counter (Vector or Array)
 
 /*
 Intuition:

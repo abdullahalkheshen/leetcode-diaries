@@ -205,6 +205,7 @@ class Solution
     }
     vector<vector<int>> twoSum(vector<int> nums, int i, vector<vector<int>> res)
     {
+        // Now, Instead of two pointers, ONE pointer "j" + set
         unordered_set<int> s;
         for (size_t j = i+1; j < nums.size(); j++)
         {
@@ -213,6 +214,8 @@ class Solution
             if (s.count(comp))
             {
                 res.push_back({nums[i], nums[j], comp});
+
+                // "Optional" while loops for optimizing time efficiency by skipping dups.
                 while(j+1 < nums.size() && nums[j] != nums[j-1]) ++j;
                 while(i+1 < nums.size() && nums[i] != nums[i+1]) ++i;
             }
@@ -234,7 +237,7 @@ class Solution
     Algorithm:
         0. The algorithm is similar to the hashset approach above. We just need to add few optimizations so that it works efficiently for repeated values.
            `
-        1. Declare hashset dups to skip duplicates in the outer loop. 
+        1. Declare hashset dups to skip duplicates in the outer loop.
             *Without this optimization, the submission will time out for the test case with 3,000 zeroes.
             *This case is handled naturally when the array is sorted.
         
@@ -272,18 +275,35 @@ public:
         unordered_set<int> dups;
         unordered_map<int, int> seen;
         for (int i = 0; i < nums.size(); ++i)
-            if (dups.insert(nums[i]).second) {
-                for (int j = i + 1; j < nums.size(); ++j) {
-                    int complement = -nums[i] - nums[j];
+            if (dups.insert(nums[i]).second)
+            {
+                for (int j = i + 1; j < nums.size(); ++j)
+                {
+                    // complement + nums[i] + nums[j] = 0;
+                    // complement is an element calculated, and explored in previous iterations, then pushed into a map with the index of "i" found at it.
+                    int complement = -nums[i] - nums[j]; 
                     auto it = seen.find(complement);
-                    if (it != end(seen) && it->second == i) {
+                    if (it != end(seen) && it->second == i) 
+                    {
                         vector<int> triplet = {nums[i], nums[j], complement};
+
                         sort(begin(triplet), end(triplet));
                         res.insert(triplet);
                     }
-                    seen[nums[j]] = i;
+                    seen[nums[j]] = i;  
                 }
             }
         return vector<vector<int>>(begin(res), end(res));
     }
 };
+
+
+/* 
+    Notes :
+        *if (dups.insert(nums[i]).second):
+        The .second member of the returned pair is a Boolean value that indicates whether the insertion succeeded.
+        If the insertion succeeded, .second is true.
+        If the insertion failed, .second is false.
+*/
+
+// Least and not last, leetcode's video editorial was crucial and critical for undersatnding this problem.

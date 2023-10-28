@@ -94,7 +94,7 @@ public:
         }
         return triplets;
     }
-    vector<int> twoSumⅠⅠ(const vector<int> &arr, int i, vector<vector<int>> &triplets)
+    void twoSumⅠⅠ(const vector<int> &arr, int i, vector<vector<int>> &triplets)
     {
         // left pointer start next to "i" pointer directly.
         int l = i + 1, r = arr.size() - 1;

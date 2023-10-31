@@ -20,7 +20,7 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Approach #1 Brute force (Three Pass)
-    // Triple for loop of O(n^3) this probably will exceed time limit.
+// Triple for loop of O(n^3) this probably will exceed time limit.
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,14 +69,14 @@ public:
 
         /*
             // We can proceed with one of the if/else statements
-            // So either we say continue to twoSum if elements are unique or || 
+            // So either we say continue to twoSum if elements are unique or ||
             for (int i = 0; i < nums.size() && nums[i] <= 0; ++i)
             {
-                
+
                 // Skip duplicates
                 // only continue to twoSum with unique elements ..
                 // This else if can also be removed and just write twoSumII(nums, i, res);
-                
+
                 if (i>0 && nums[i] == nums[i - 1]) continue;
                 else if (i == 0 || nums[i - 1] != nums[i])
                 {
@@ -87,6 +87,8 @@ public:
 
         for (size_t i = 0; i < arr.size() && arr[i] <= 0; i++)
         {
+            if (i >= 0 && arr[i] == arr[i - 1])
+                continue; // this's optional
             if (i == 0 || arr[i] != arr[i - 1])
             {
                 twoSumⅠⅠ(arr, i, triplets); // call the non-static member function on the instance
@@ -101,46 +103,51 @@ public:
         while (l < r)
         {
             int sum = arr[i] + arr[l] + arr[r];
-            if (sum < 0) l++;
-            else if (sum > 0) r--;
+            if (sum < 0)
+                l++;
+            else if (sum > 0)
+                r--;
             else
             {
                 triplets.push_back({arr[i], arr[l], arr[r]});
                 // l<r or || l+1<arr.size()
-                while (l<r && arr[l] == arr[l - 1])
-                    l++;
-                while (l<r && arr[r] == arr[r - 1])
-                    r--;
+                while (l < r && arr[l] == arr[l + 1]) l++;
+                while (l < r && arr[r] == arr[r - 1]) r--;
             }
         }
     }
 };
 
-
 // Same approach using One function:
-vector<vector<int>> threeSum(vector<int>& nums)
+vector<vector<int>> threeSum(vector<int> &nums)
 {
-    sort(nums.begin(),nums.end());
-    int n=nums.size();
+    sort(nums.begin(), nums.end());
+    int n = nums.size();
     vector<vector<int>> triplets;
-    for(int i=0;i<n-2;i++)
+    for (int i = 0; i < n - 2; i++)
     {
-        if(i>0 && (nums[i]==nums[i-1]))continue;
-        int l=i+1, r= n-1;
-        while(l<r)
+        if (i > 0 && (nums[i] == nums[i - 1]))
+            continue;
+        int l = i + 1, r = n - 1;
+        while (l < r)
         {
-            int sum =nums[i]+nums[l]+nums[r];
+            int sum = nums[i] + nums[l] + nums[r];
             // sum (which's 0 for this problem) = arr[i] + arr[l] + arr[r];
             // So check for -nums[i] i.e. arr[l] + arr[r] == -arr[i]
             // So it'd be: if(arr[l]+arr[r] < -arr[i])
-            if(sum<0) l++;
-            else if(sum>0)r--;
-            else {
-                triplets.push_back({nums[i],nums[l],nums[r]});
-                while(l+1<r && nums[l] == nums[l+1]) l++; // skip duplicate low_pointer side.
-                while(l<r-1 && nums[r] == nums[r-1]) r--; // skip duplicate high_pointer side.
+            if (sum < 0)
+                l++;
+            else if (sum > 0)
+                r--;
+            else
+            {
+                // push and update/increment pointers to nexts
+                triplets.push_back({nums[i], nums[l++], nums[r--]});
+                while (l < r && nums[l] == nums[l + 1])
+                    l++;
+                while (l < r && nums[r] == nums[r - 1])
+                    r--;
             }
-            l++;r--; // update pointers for the next iteration to pass across new nums / Loop continuation condition.
         }
     }
     return triplets;
@@ -150,7 +157,7 @@ vector<vector<int>> threeSum(vector<int>& nums)
 
 // Approach #2 Sort + Set
 
-/* 
+/*
     Intuition:
         Like in the approach above, we will also sort the array so we can skip repeated values.
         We move our pivot element nums[i] and analyze elements to its right. We find all pairs whose sum is equal -nums[i] using the Two Sum:
@@ -166,7 +173,7 @@ vector<vector<int>> threeSum(vector<int>& nums)
                 1.3.1 If the current value is greater than zero, break from the loop. Remaining values cannot sum to zero.
                 1.3.2 If the current value is the same as the one before, skip it.
             1.4. Otherwise, call twoSum for the current position i.
-        
+
         2. For twoSum function:
             2.1. For each index j > i in A:
             2.2. Compute complement value as -nums[i] - nums[j].
@@ -174,7 +181,7 @@ vector<vector<int>> threeSum(vector<int>& nums)
                 2.3.1. We found a triplet - add it to the result res.
             2.4. Increment j while the next value is the same as before to avoid duplicates in the result.
             2.5. Add nums[j] to hashset seen
-        
+
         3. Return the result res.
 
         Complexity Analysis:
@@ -186,17 +193,18 @@ vector<vector<int>> threeSum(vector<int>& nums)
             Space Complexity: O(n) for the hashset.
 */
 
-# include<unordered_set>
+#include <unordered_set>
 class Solution
 {
-    public:
-    vector<vector<int>> threeSum(vector<int>& nums)
+public:
+    vector<vector<int>> threeSum(vector<int> &nums)
     {
         vector<vector<int>> res;
         for (size_t i = 0; i < nums.size(); i++)
         {
-            if (i>0 || nums[i] == nums[i-1]) continue;
-            else if (i==0 || nums[i] != nums[i])
+            if (i > 0 || nums[i] == nums[i - 1])
+                continue;
+            else if (i == 0 || nums[i] != nums[i])
             {
                 twoSum(nums, i, res);
             }
@@ -207,19 +215,18 @@ class Solution
     {
         // Now, Instead of two pointers, ONE pointer "j" + set
         unordered_set<int> s;
-        for (size_t j = i+1; j < nums.size(); j++)
+        for (size_t j = i + 1; j < nums.size(); j++)
         {
-            int comp = - nums[i] - nums[j];
+            int comp = -nums[i] - nums[j];
 
             if (s.count(comp))
             {
                 res.push_back({nums[i], nums[j], comp});
 
                 // "Optional" while loops for optimizing time efficiency by skipping dups.
-                while(j+1 < nums.size() && nums[j] != nums[j-1]) ++j;
-                while(i+1 < nums.size() && nums[i] != nums[i+1]) ++i;
+                while (i + 1 < nums.size() && nums[i] != nums[i - 1]) ++i;
+                while (j + 1 < nums.size() && nums[j] != nums[j + 1]) ++j; // j+1 as j is the pointer moving to the right
             }
-            
         }
     }
 };
@@ -228,28 +235,28 @@ class Solution
 
 // Approach #2 No Sorting (Set + Map)
 
-/* 
+/*
     Intuition:
         What if you cannot modify the input array, and you want to avoid copying it due to memory constraints?
-        We can adapt the hashset approach above to work for an unsorted array. We can put a combination of three values into a hashset to avoid duplicates. 
+        We can adapt the hashset approach above to work for an unsorted array. We can put a combination of three values into a hashset to avoid duplicates.
         Values in a combination should be ordered (e.g. ascending). Otherwise, we can have results with the same values in the different positions.
-    
+
     Algorithm:
         0. The algorithm is similar to the hashset approach above. We just need to add few optimizations so that it works efficiently for repeated values.
            `
         1. Declare hashset dups to skip duplicates in the outer loop.
             *Without this optimization, the submission will time out for the test case with 3,000 zeroes.
             *This case is handled naturally when the array is sorted.
-        
+
         2. Instead of re-populating a hashset every time in the inner loop, use a hashmap and populate it once.
             Values in the hashmap will indicate whether we have encountered that element in the current iteration.
             When we process nums[j] in the inner loop, we set its hashmap value to i.
-            This indicates that we can now use nums[j] as a complement for nums[i].            
+            This indicates that we can now use nums[j] as a complement for nums[i].
             This is more like a trick to compensate for container overheads. The effect varies by language, e.g. for C++ it cuts the runtime in half.
             *Without this trick the submission may time out.
-        
+
         3. return the vector of vectors of the results.
-    
+
     Complexity Analysis
         Time Complexity: O(n^2)
             We have outer and inner loops, each going through "n" elements.
@@ -259,7 +266,7 @@ class Solution
         Space Complexity: O(n)
             -> O(n+n) = O(n) for the hashset/hashmap.
             -> For the purpose of complexity analysis, we ignore the memory required for the output.
-                However, in this approach we also store output in the hashset for deduplication. 
+                However, in this approach we also store output in the hashset for deduplication.
                 In the worst case, there could be O(n^2) triplets in the output, like for this example: [-k, -k + 1, ..., -1, 0, 1, ... k - 1, k].
             -> Adding a new number to this sequence will produce n / 3 new triplets.
 
@@ -268,9 +275,11 @@ class Solution
 #include <set>
 #include <unordered_map>
 
-class Solution {
+class Solution
+{
 public:
-    vector<vector<int>> threeSum(vector<int>& nums) {
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
         set<vector<int>> res;
         unordered_set<int> dups;
         unordered_map<int, int> seen;
@@ -281,24 +290,23 @@ public:
                 {
                     // complement + nums[i] + nums[j] = 0;
                     // complement is an element calculated, and explored in previous iterations, then pushed into a map with the index of "i" found at it.
-                    int complement = -nums[i] - nums[j]; 
+                    int complement = -nums[i] - nums[j];
                     auto it = seen.find(complement);
-                    if (it != end(seen) && it->second == i) 
+                    if (it != end(seen) && it->second == i)
                     {
                         vector<int> triplet = {nums[i], nums[j], complement};
 
                         sort(begin(triplet), end(triplet));
                         res.insert(triplet);
                     }
-                    seen[nums[j]] = i;  
+                    seen[nums[j]] = i;
                 }
             }
         return vector<vector<int>>(begin(res), end(res));
     }
 };
 
-
-/* 
+/*
     Notes :
         *if (dups.insert(nums[i]).second):
         The .second member of the returned pair is a Boolean value that indicates whether the insertion succeeded.

@@ -47,21 +47,27 @@ public:
         sort(nums.begin(), nums.end());
         set<vector<int>> set;
         vector<vector<int>> triplets;
-        for(int i=0; i<n-3; i++){
-            for(int j=i+1; j<n-2; j++){
-                for(int k=j+1; k<n-1; k++){
-                    for(int l=k+1; l<n; l++){
-                        if((long long)nums[i] + (long long)nums[j] + (long long)nums[k] + 
-                        (long long)nums[l] == target){
+        for(int i=0; i<n-3; i++)
+        {
+            for(int j=i+1; j<n-2; j++)
+            {
+                for(int k=j+1; k<n-1; k++)
+                {
+                    for(int l=k+1; l<n; l++)
+                    {
+                        if((long long)nums[i] + (long long)nums[j] + (long long)nums[k] + (long long)nums[l] == target)
+                        {
                             set.insert({nums[i], nums[j], nums[k], nums[l]});
                         }
                     }
                 }
             }
         }
+
         for(auto it : set){
             triplets.push_back(it);
         }
+
         return triplets;
     }
 };
@@ -106,36 +112,34 @@ public:
         vector<vector<int>> triplets;
         for(int i=0; i<n-3; i++){
             for(int j=i+1; j<n-2; j++){
+                
                 long long complement = (long long)target - (long long)nums[i] - (long long)nums[j];
                 int l = j+1, r = n-1;
-                while(l < r){
-                    if(nums[l] + nums[r] < complement){
-                        l++;
-                    }
-                    else if(nums[l] + nums[r] > complement){
-                        r--;
-                    }
-                    else{
+                
+                while(l < r)
+                {
+                    if(nums[l] + nums[r] < complement) l++;                        
+                    else if(nums[l] + nums[r] > complement) r--;
+                    else
+                    {
                         triplets.push_back({nums[i], nums[j], nums[l], nums[r]});
                         // In general, the third while loop is the best choice, as it has the fastest time complexity. 
-                          // However, if the array is very large and contains many duplicate elements, then the second loop may be a better choice, as it will still be relatively fast.
-
                         // 1st method - Worst time complexity of O(n) as it iterates through the whole array
                             // int tempIndex1 = l, tempIndex2 = r;
-                            // while(l < r && nums[l] == nums[tempIndex1]) l++;
-                            // while(l < r && nums[r] == nums[tempIndex2]) r--;
+                            // while(l < r && nums[l]==nums[tempIndex1]) l++;
+                            // while(l < r && nums[r]==nums[tempIndex2]) r--;
                         
                         // 2nd one - with time complexity if O(n*logn)
-                            // while(l<r && nums[l] == nums[l-1]) l++;
-                            // while(l<r && nums[r] == nums[r+1]) r--;
+                            // while(l<r && nums[l]==nums[l-1]) l++;
+                            // while(l<r && nums[r]==nums[r+1]) r--;
                         
                         // 3rd one - with time complexity of O(1).
                             do{l++;} while(l<r && nums[l]==nums[l-1]);
                             do{r--;} while(l<r && nums[r]==nums[r+1]);                    }
                 }
-                while(j+1 < n && nums[j] == nums[j+1]) j++;
+                while(j+1 < n && nums[j]==nums[j+1]) j++;
             }
-            while(i+1 < n && nums[i] == nums[i+1]) i++;
+            while(i+1 < n && nums[i]==nums[i+1]) i++;
         }
         return triplets;
     }
@@ -157,25 +161,34 @@ class Solution
 public:
     static vector<vector<int>> searchQuadruplets(vector<int> &nums, int target)
     {
-        int n = nums.size();
+        int n = int(nums.size());
         sort(nums.begin(), nums.end());
         vector<vector<int>> quadruplets;
         set<vector<int>> set;
 
-        for (int i = 0; i < nums.size() - 3; i++)
+        for (int i = 0; i < int(nums.size()) - 3; i++)
         {
+            // Their goal is to skip some unnecessary iterations at edge cases
             if(i>0 && nums[i]==nums[i-1]) continue;
-            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3] > target) break;
-            if(nums[i]+nums[n-3]+nums[n-2]+nums[n-1] < target) continue;
+            if(static_cast<long long>(nums[i]) + nums[i+1] + nums[i+2] + nums[i+3] > target) break;
+            if(static_cast<long long>(nums[i]) + nums[n-3] + nums[n-2] + nums[n-1] < target) continue;
+            
+            // These two lines of code are wrong because they're not statically casted.
+            // if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3] > target) break;
+            // if(nums[i]+nums[n-3]+nums[n-2]+nums[n-1] < target) continue;
 
-            for (int j = i + 1; j < nums.size() - 2; j++)
+            for (int j = i + 1; j < int(nums.size()) - 2; j++)
             {
-                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target) break;
-                if(nums[i]+nums[j]+nums[n-2]+nums[n-1]<target) continue;
+                if(static_cast<long long>(nums[i]) + nums[j] + nums[j+1] + nums[j+2] > target) break;
+                if(static_cast<long long>(nums[i]) + nums[j] + nums[n-2] + nums[n-1] < target) continue;
+                
+                // These two lines of code are wrong because they're not statically casted.
+                // if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target) break;
+                // if(nums[i]+nums[j]+nums[n-2]+nums[n-1]<target) continue;
 
                 long long complement = static_cast<long long>(target) - static_cast<long long>(nums[i] + nums[j]);
 
-                int l = j + 1, r = nums.size() - 1;
+                int l = j + 1, r = int(nums.size()) - 1;
                 while (l < r)
                 {
                     if (nums[l] + nums[r] < complement) l++;
@@ -189,8 +202,5 @@ public:
     }
 };
 
-
-
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 

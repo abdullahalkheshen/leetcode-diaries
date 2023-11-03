@@ -92,13 +92,13 @@ public:
         we will skip and apply the backspace until we have a valid character available for comparison.
 
     Algorithm:
-        1. In the compare function, two pointers are initialized, pointer1 and pointer2, to the last index of str1 and str2, respectively.
+        1. In the compare function, two pointers are initialized, ptr1 and ptr2, to the last index of str1 and str2, respectively.
         2. A while loop is started which continues until both pointers are less than zero, that is, both have traversed their strings completely in a reverse manner.
         3. Inside this loop, for each string, the get_next_valid_index function is called with the current pointer. This function returns the index of the next valid character in the string (traversing from back to front) by taking into account the backspace characters. 
-            i1 and i2 point to the index of the next valid character in the two strings.
-        4. If both i1 and i2 are less than zero, it means the end of both strings has been reached, and the strings are considered equal.
-        5. If only one of i1 or i2 is less than zero, it means the end of one string has been reached, but not the other, and the strings are not equal.
-        6. If the characters at indices i1 and i2 are not the same, the strings are not equal.
+            j1 and j2 point to the index of the next valid character in the two strings.
+        4. If both j1 and j2 are less than zero, it means the end of both strings has been reached, and the strings are considered equal.
+        5. If only one of j1 or j2 is less than zero, it means the end of one string has been reached, but not the other, and the strings are not equal.
+        6. If the characters at indices j1 and j2 are not the same, the strings are not equal.
         7. If none of the above conditions are met, the loop continues to the next valid characters in both strings.
         8. The get_next_valid_index function accepts a string and an index, and uses a backspace count to keep track of how many backspaces have been encountered. It then loops through the string backwards from the provided index until it encounters a valid character or reaches the beginning of the string.
         9. If a backspace character is found, the backspace count is incremented. If a non-backspace character is found and there are any counted backspaces, one backspace is subtracted from the count (to simulate the removal of the previous character), and the loop continues. 
@@ -109,7 +109,7 @@ public:
             -> The time complexity of the above algorithm will be  where ‘M’ and ‘N’ are the lengths of the two input strings respectively.
 
         Space Complexity: O(1)
-            -> The algorithm runs in constant space .
+            -> The algorithm runs in constant space.
 */
 
 class Solution
@@ -117,42 +117,46 @@ class Solution
 public:
     static bool compare(const string &str1, const string &str2)
     {
-        int pointer1 = str1.size() - 1, pointer2 = str2.size() - 1;
-        while (pointer1 >= 0 || pointer2 >= 0)
+        int ptr1 = str1.size() - 1, ptr2 = str2.size() - 1;
+        while (ptr1 >= 0 || ptr2 >= 0)
         {
-            int i1 = get_next_valid_char_index(str1, pointer1);
-            int i2 = get_next_valid_char_index(str2, pointer2);
+            int j1 = get_next_valid_char_index(str1, ptr1);
+            int j2 = get_next_valid_char_index(str2, ptr2);
 
-            if (i1 < 0 && i2 < 0) return true;
-            if (i1 < 0 || i2 < 0) return false;
-            if (str1[i1] != str2[i2]) return false;
+            if (j1 < 0 && j2 < 0) return true; // reached the end of both the strings
+            if (j1 < 0 || j2 < 0) return false; // reached the end of one of the strings
+            if (str1[j1] != str2[j2]) return false; // check if the characters are equal
 
-            pointer1 = i1--;
-            pointer2 = i2--;
+            ptr1 = j1--;
+            ptr2 = j2--;
         }
-
         return true;
     }
 
 private:
-    static int get_next_valid_char_index(const string &str, int index)
+    static int get_next_valid_char_index(const string &str, int j)
     {
         int backspace_count = 0;
-        while (index >= 0)
+        while (j >= 0)
         {
-            if (str[index] == '#') backspace_count++;
-            else if ( /* above condition is false && */ backspace_count > 0) backspace_count--;
+            if (str[j] == '#') backspace_count++;
+            else if (backspace_count > 0) backspace_count--; // a non-backspace character
             else break;
-
-            index--;
+            j--; // skip a backspace or a valid character
         }
-        return index;
+        return j;
     }
 };
 
+/* 
+    Notes:
+        1. if else if else is chaining !!!
+        2. ELSE means all of the above ifs conditions are false so break the whole while loop.
+*/
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach #1: One Pointer
+// Approach #3: One Pointer
 
 /* 
     Intuition

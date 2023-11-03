@@ -184,7 +184,6 @@ public:
             }
             stack.push(i);
         }
-
         return (r - l > 0) ? (r - l + 1) : 0;
     }
 };
@@ -237,8 +236,8 @@ public:
             unsortedSubarrayRightIndex = max(unsortedSubarrayRightIndex, nums[i]);
         }
 
-        while (low-1 >= 0 && nums[low-1] > unsortedSubarrayLeftIndex) low--;
-        while (high+1 <= nums.size()-1 && nums[high+1] < unsortedSubarrayRightIndex) high++;
+        while (low > 0 && nums[low-1] > unsortedSubarrayLeftIndex) low--;
+        while (high < nums.size()-1 && nums[high+1] < unsortedSubarrayRightIndex) high++;
 
         return high - low + 1;
     }

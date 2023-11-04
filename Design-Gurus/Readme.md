@@ -2,14 +2,14 @@
 Consists of:
 
 1. Warmup
-2. Pattern Two Pointers
-3. Pattern: Fast & Slow Pointers
-4. Pattern: Sliding Window
-5. Pattern: Merge Intervals
-6. Pattern: Cyclic Sort
-7. Pattern: In-place Reversal of a Linked List
-8. Pattern: Monotonic Stack (*NEW*)
-9. Pattern: Tree Breadth First Search
+2.  Pattern Two Pointers
+3.  Pattern: Fast & Slow Pointers
+4.  Pattern: Sliding Window
+5.  Pattern: Merge Intervals
+6.  Pattern: Cyclic Sort
+7.  Pattern: In-place Reversal of a Linked List
+8.  Pattern: Monotonic Stack (*NEW*)
+9.  Pattern: Tree Breadth First Search
 10. Pattern: Tree Depth First Search
 11. Pattern: Island (Matrix Traversal)
 12. Pattern: Two Heaps

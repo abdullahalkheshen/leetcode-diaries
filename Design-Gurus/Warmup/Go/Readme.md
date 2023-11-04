@@ -1,1 +1,0 @@
-Solve Design-Gurus Warmup problems in Go

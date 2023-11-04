@@ -1,7 +1,7 @@
 "Grokking the Coding Interview: Patterns for Coding Questions"
 Consists of:
 
-1. Warmup
+1.  Warmup
 2.  Pattern Two Pointers
 3.  Pattern: Fast & Slow Pointers
 4.  Pattern: Sliding Window

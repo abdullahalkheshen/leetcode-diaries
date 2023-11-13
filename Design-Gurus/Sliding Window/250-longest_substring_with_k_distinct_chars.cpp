@@ -74,26 +74,26 @@ using namespace std;
 #include <iostream>
 #include <string>
 #include <unordered_map>
-/* 
+
 class Solution {
 public:
     int length_of_longest_substring_K_distinct(string s, int k) 
     {
-        if (k >= s.length())  return s.length();
-        int left = k, windows_end = s.length();
-        while (left < windows_end) 
+        if (k >= s.length()) return s.length();
+        int left = k, right = s.length();
+        while (left < right) 
         {
-            int mid = (left + windows_end + 1) / 2;
+            int mid = (left + right + 1) / 2;
 
-            if (isValid(s, mid, k)) left = mid;
-            else windows_end = mid - 1;
+            if (is_valid(s, mid, k)) left = mid;
+            else right = mid - 1;
         }
 
         return left;
     }
 
 private:
-    bool isValid(string s, int size, int k) 
+    bool is_valid(string s, int size, int k) 
     {
         unordered_map<char, int> map;
 
@@ -119,7 +119,7 @@ private:
         return false;
     }
 };
- */
+
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ private:
             → as we will be storing a maximum of K + 1 characters in the HashMap.  
 */
 
-/* class LongestSubstringKDistinct
+class Solution
 {
     public:
         static int findLength(const string &str, int k)
@@ -181,7 +181,7 @@ private:
             return max_size;
         }
 };
- */
+
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -194,13 +194,15 @@ private:
         During this process, the size of the window may decrease, even smaller than the previous valid window. 
         Taking the figure below as an example, the window on the left is valid, but the window' on the windows_end is not valid, and we need to remove the left characters from it to make it valid.
         However, we don't need to decrease the size of the window.
-        If we have already found a window of length max_size , then what we need to do next is to search for a larger valid window, for example, a window with length max_size + 1 . Therefore, in the following sliding window process, even if the current window with size max_size is not valid, there is no problem, because we have already found a window of
-        length max_size before, so we may as well continue looking for a larger window.
+        If we have already found a window of length max_size , then what we need to do next is to search for a larger valid window, for example, a window with length max_size + 1 . 
+        Therefore, in the following sliding window process, even if the current window with size max_size is not valid, there is no problem, because we have already found a window of length max_size before, so we may as well continue looking for a larger window.
         Understanding this, we can simplify the solution in approach 2:
         Again, we use a hash map map to keep track of the frequency of each letter in the current window. When we increase the window length by 1, we need to increase the count of the character at the current windows_end boundary map[s[windows_end]] by 1.
         If the expanded window is still valid, it means that we geta larger valid window with length max_size + 1 (from 2 to 3 ). We can continue to move the boundary windows_end.
         However, if the expanded window is invalid, we only need to remove the leftmost character in the window to keep the window length still at max_size (from 4 to 3 ), that is, decrease - by 1.
-        Since the expanded window of length 4 was invalid, we removed a character from the leftmost side of the window to make its length 3 again. Although the current window is still invalid, we don't need to keep shrinking it because we have previously found a valid window of length 3 . We can continue to shift the boundary windows_end to try the next window of size 4 .
+        Since the expanded window of length 4 was invalid, we removed a character from the leftmost side of the window to make its length 3 again. 
+        Although the current window is still invalid, we don't need to keep shrinking it because we have previously found a valid window of length 3 . 
+        We can continue to shift the boundary windows_end to try the next window of size 4 .
         Once this iteration is over, max_size represents the maximum size of the valid window.
 
     Algorithm:
@@ -209,7 +211,7 @@ private:
             • If len(map) > k , decrement map[s[windows_end — max_size]] by l.
             • Delete map [s [windows_end — max_sizel] if its value equals O.
             • Otherwise, increment max_size by 1.
-        3. Return max size when the iteration ends.
+        3. Return max_size when the iteration ends which's the maximum distinct characters substring size.
     
     Complexity Analysis:
         Let n be the length of the input string s and k be the maximum number of distinct characters.
@@ -243,13 +245,3 @@ public:
         return max_size;
     }
 };
-
-int main ()
-{
-    Solution sol;
-    string str = "araaci";
-    int k = 2;
-    int output = sol.length_of_longest_substring_K_distinct(str, k);
-    cout << output;
-    return 0;
-}

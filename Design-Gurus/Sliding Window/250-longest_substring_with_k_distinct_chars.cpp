@@ -88,7 +88,6 @@ public:
             if (is_valid(s, mid, k)) left = mid;
             else right = mid - 1;
         }
-
         return left;
     }
 
@@ -99,23 +98,18 @@ private:
 
         for (int i = 0; i < size; i++) 
         {
-            char c = s[i];
-            map[c]++;
+            map[s[i]]++;
         }
-
         if (map.size() <= k) return true;
 
         for (int i = size; i < s.length(); i++) 
         {
-            char c1 = s[i];
-            map[c1]++;
-
-            char c2 = s[i - size];
-            map[c2]--;
-
-            if (map[c2] == 0)  map.erase(c2);
-            if (map.size() <= k) return true;
+            map[s[i]]++;
+            map[s[i - size]]--;
+            if (map[s[i - size]] == 0) map.erase(s[i - size]);
         }
+        if (map.size() <= k) return true;   
+
         return false;
     }
 };

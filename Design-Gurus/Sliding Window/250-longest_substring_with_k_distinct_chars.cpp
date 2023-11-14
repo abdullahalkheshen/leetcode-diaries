@@ -27,38 +27,40 @@
 
 // Approach #1 Fixed Sliding Window + Binary Search
 /* 
-    Intuition
+    Intuition:
         Since we are asked to find the longest substring of identical characters, we could first set up a target length max_size.
-        To check if a valid substring with this length exists, we iterate over "s" and check each substring of length max_size .
-        If we find a substring that contains "k" or fewer unique characters, then this substring is considered valid.
-        The method described in this solution is also known as the fixed sliding window algorithm. 
-        As we traverse the sequence from left to windows_end, we maintain a fixed length max_size for the subarray, which can be visualized as moving a window of that length over the input. 
-        if we set the window length to max_size = 3 , we can find some valid windows that only contain 2 or fewer unique characters.
-        However, if we set the length to max_size = 7 , we will not find any valid windows, since the only 3 windows of size 7 contain more than 2 distinct characters.
-        During the iteration, when we move the windows_end boundary of the window from windows_end - 1 to windows_end.
-        we don't need to recalculate the count of each character over again, note that two adjacent windows only differ by two characters s[windows_end - max_size] ). 
-        We only need to increment the count of s[windows_endJ by 1 and decrement the count of s[windows_end] s[windows_end - max_size] by 1 , based on the result of the previous window.
-        To quickly find the maximum valid window length, we can use binary search. To begin, we need to define a search space that ensures the maximum window length we are looking for is in this range.
-        We can set the left boundary of the search space to left = k (a window of size k always contains no more than k unique characters) and the windows_end boundary to = n , which is the maximum possible window length.
-        windows_end We will now perform a binary search on the interval [left, windows_end] . In each iteration, we compute the midpoint of the interval, which we denote as mid . 
-        Then, we slide a window of length mid using the previous approach to check whether there exists at least one valid window. If we find a valid window, we then continue to search for a larger window length in [mid, windows_end], the windows_end half of the interval. 
-        Otherwise, if mid is still too large, we continue our search in [left, mid - 11 , the left half of the search space.
+        To check if a valid substring with this length exists, we iterate over "s" and check each substring of length max_size.
+            If we find a substring that contains "k" or fewer unique characters, then this substring is considered valid.
+            The method described in this solution is also known as the fixed sliding window algorithm. 
+            As we traverse the sequence from windows_start to windows_end, we maintain a fixed length max_size for the subarray, which can be visualized as moving a window of that length over the input. 
+            if we set the window length to max_size = 3 , we can find some valid windows that only contain 2 or fewer unique characters. 
+            However, if we set the length to max_size = 7 , we will not find any valid windows, since the only 3 windows of size 7 contain more than 2 distinct characters.
+            During the iteration, when we move the windows_end boundary of the window from windows_end - 1 to windows_end, we don't need to recalculate the count of each character over again, note that two adjacent windows only differ by two characters s[windows_end - max_size]. 
+            We only need to increment the count of s[windows_end] by 1 and decrement the count of s[windows_end] s[windows_end - max_size] by 1 , based on the result of the previous window.
+        To quickly find the maximum valid window length, we can use binary search. 
+            To begin, we need to define a search space that ensures the maximum window length we are looking for is in this range.
+            We can set the windows_start boundary of the search space to windows_start = k (a window of size k always contains no more than k unique characters) and the windows_end boundary to = n.
+            We will now perform a binary search on the interval [windows_start, windows_end] . 
+            → In each iteration, we compute the midpoint of the interval, which we denote as mid.
+            Then, we slide a window of length mid using the previous approach to check whether there exists at least one valid window. 
+            If we find a valid window, we then continue to search for a larger window length in [mid, windows_end], the windows_end half of the interval.
+            Otherwise, if mid is still too large, we continue our search in [windows_start, mid - 1] , the windows_start half of the search space.
     
-    Algorithm
-        1. If k n , we don't need to perform the binary search, just return n .
-        2. Initialize the search space as left = k , windows_end = n
+    Algorithm:
+        1. If k >= n , we don't need to perform the binary search, just return n .
+        2. Initialize the search space as windows_start = k , windows_end = n
         3. Define a function isVa1id to help verify if there exists a valid subarray of length size :
             • Count the number of each characterin in a hash map map , return true if len(map) k
             • Iterate the index of the windows_end boundary of the window from size - 1 to n . At each step i , increment
             byl and decrement - size]] by 1, if - o , we delete this item maps[s[i - size]] ¯ from map .
             • Return true if len(map) k at any point in this iteration
             • Return false if we finish iterating without finding a valid window.
-        4. While left < windows_end
-           • Compute the middle value as mid = windows_end — (windows_end — left) / 2
+        4. While windows_start < windows_end
+           • Compute the middle value as mid = windows_end — (windows_end — windows_start) / 2
            • Check if the window of size mid is valid using the helper method.
-           • If isVa1id(mid) is true, let left = mid and repeat.
+           • If isVa1id(mid) is true, let windows_start = mid and repeat.
            • If isVa1id(mid) is false, let windows_end = mid - 1 and repeat.
-        5. Return left once the binary search ends.
+        5. Return windows_start once the binary search ends.
     
     Complexity Analysis:
         Time complexity: • logn)
@@ -67,7 +69,7 @@
             o At each step, we iterate over s which takes time.
         
         Space complexity: O(n)
-            o We need to update the boundary indices left and windows_end .
+            o We need to update the boundary indices windows_start and windows_end .
             o During the iteration, we use a hash map map which could contain at most O(n) distinct characters.
 */
 using namespace std;
@@ -77,43 +79,39 @@ using namespace std;
 
 class Solution {
 public:
-    int length_of_longest_substring_K_distinct(string s, int k) 
+    int length_of_longest_substring_K_distinct(string &s, int k) 
     {
-        if (k >= s.length()) return s.length();
-        int left = k, right = s.length();
-        while (left < right) 
+        if (s.length() <= k) return s.length();
+        
+        int windows_start = k, window_end = s.length();
+        while (windows_start < window_end)
         {
-            int mid = (left + right + 1) / 2;
-
-            if (is_valid(s, mid, k)) left = mid;
-            else right = mid - 1;
+            int mid = (windows_start + window_end + 1) / 2;
+            if (is_valid_window(s, mid, k)) windows_start = mid;
+            else window_end = mid - 1;
         }
-        return left;
+        return windows_start;
     }
 
 private:
-    bool is_valid(string s, int size, int k) 
+    bool is_valid_window(string s, int size, int k) 
     {
         unordered_map<char, int> map;
 
-        for (int i = 0; i < size; i++) 
-        {
-            map[s[i]]++;
-        }
+        for (int i = 0; i < size; i++) map[s[i]]++;
         if (map.size() <= k) return true;
 
-        for (int i = size; i < s.length(); i++) 
+        for (int i = size; i < s.length(); i++)
         {
             map[s[i]]++;
             map[s[i - size]]--;
             if (map[s[i - size]] == 0) map.erase(s[i - size]);
+            if (map.size() <= k) return true;
         }
-        if (map.size() <= k) return true;   
 
         return false;
     }
 };
-
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -128,7 +126,7 @@ private:
         We will still use the map map to record the map of each type of character within the window.
         Specifically, if the current window is valid, we can try to expand the window by moving the windows_end boundary one position
         to the windows_end, windows_end = windows_end + 1 . 
-        On the other hand, if the current window is invalid, we keep moving the left boundary to the windows_end (equivalent to removing the leftmost character from the window) until the window becomes valid, that is left = left + 1 . 
+        On the other hand, if the current window is invalid, we keep moving the windows_start boundary to the windows_end (equivalent to removing the windows_startmost character from the window) until the window becomes valid, that is windows_start = windows_start + 1 . 
         During this process, we constantly record the longest valid window seen so far.
         As shown in the following figure, we keep adjusting the size of the window and recording the maximum size of the valid window.
 
@@ -154,23 +152,26 @@ private:
 class Solution
 {
     public:
-        static int findLength(const string &str, int k)
+        static int length_of_longest_substring_K_distinct(const string &str, int k)
         {
             int max_size = 0;
             int window_start = 0;
+            int window_end = 0;
             unordered_map<char, int> map;
 
-            for (int window_end = 0; window_end < str.length(); window_end++)
+            while(window_end < str.length()) // or for(int window_end=0; window_end<str.length(); window_end++)
             {
                 map[str[window_end]]++;
                 
                 while ((int)map.size() > k)
                 {
                     map[str[window_start]]--;
-                    if (map[str[window_start]] == 0) map.erase(str[window_start++]);
+                    if (map[str[window_start]] == 0) map.erase(str[window_start]);
+                    window_start++;
                 }
                 // remember the maximum length so far
                 max_size = max(max_size, (window_end - window_start + 1));
+                window_end++;
             }
             return max_size;
         }
@@ -184,17 +185,17 @@ class Solution
 /* 
     Intuition:
         In the previous solution, we need to ensure that the current window is always valid. 
-        If the window contains more than k distinct characters, we need to continuously remove the leftmost character in the window. 
+        If the window contains more than k distinct characters, we need to continuously remove the windows_startmost character in the window. 
         During this process, the size of the window may decrease, even smaller than the previous valid window. 
-        Taking the figure below as an example, the window on the left is valid, but the window' on the windows_end is not valid, and we need to remove the left characters from it to make it valid.
+        Taking the figure below as an example, the window on the windows_start is valid, but the window' on the windows_end is not valid, and we need to remove the windows_start characters from it to make it valid.
         However, we don't need to decrease the size of the window.
         If we have already found a window of length max_size , then what we need to do next is to search for a larger valid window, for example, a window with length max_size + 1 . 
         Therefore, in the following sliding window process, even if the current window with size max_size is not valid, there is no problem, because we have already found a window of length max_size before, so we may as well continue looking for a larger window.
         Understanding this, we can simplify the solution in approach 2:
         Again, we use a hash map map to keep track of the frequency of each letter in the current window. When we increase the window length by 1, we need to increase the count of the character at the current windows_end boundary map[s[windows_end]] by 1.
         If the expanded window is still valid, it means that we geta larger valid window with length max_size + 1 (from 2 to 3 ). We can continue to move the boundary windows_end.
-        However, if the expanded window is invalid, we only need to remove the leftmost character in the window to keep the window length still at max_size (from 4 to 3 ), that is, decrease - by 1.
-        Since the expanded window of length 4 was invalid, we removed a character from the leftmost side of the window to make its length 3 again. 
+        However, if the expanded window is invalid, we only need to remove the windows_startmost character in the window to keep the window length still at max_size (from 4 to 3 ), that is, decrease - by 1.
+        Since the expanded window of length 4 was invalid, we removed a character from the windows_startmost side of the window to make its length 3 again. 
         Although the current window is still invalid, we don't need to keep shrinking it because we have previously found a valid window of length 3 . 
         We can continue to shift the boundary windows_end to try the next window of size 4 .
         Once this iteration is over, max_size represents the maximum size of the valid window.
@@ -239,3 +240,4 @@ public:
         return max_size;
     }
 };
+

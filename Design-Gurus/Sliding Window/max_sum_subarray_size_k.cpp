@@ -1,7 +1,7 @@
 /* 
     Leetcode name: 2461. Maximum Sum of Distinct Subarrays With Length K
-
     Maximum Sum Subarray of Size K (easy)
+    
     Problem Statement
     Given an array of positive numbers and a positive number 'k,' find the maximum sum of any contiguous subarray of size 'k'.
 
@@ -48,7 +48,6 @@
 */
 
 using namespace std;
-
 #include <iostream>
 #include <vector>
 
@@ -56,22 +55,44 @@ class Solution {
   public:
     static int findMaxSumSubArray(int k, const vector<int>& arr) 
     {
-      int max_sum = 0;
-      int window_sum = 0;
-      int window_start = 0;
+      int sum = 0;
+      int maximum_sum = 0;
+      for(int i = 0; i < k; i++) 
+        sum += arr[i];
 
-      for (size_t window_end = 0; window_end < arr.size(); window_end++)
+      maximum_sum = sum;
+      
+      for(int i = 0; i < arr.size(); i++) 
       {
-        window_sum += arr[window_end];
-        if (window_end >= k-1)
-        {
-          max_sum = max(max_sum, window_sum);
-          window_sum -= arr[window_start];
-          window_start++;
-        }
-        return max_sum;
+        sum -= arr[i - k];
+        sum += arr[i];
+        maximum_sum = max(sum, maximum_sum);
       }
-    }
-};
 
+      return maximum_sum;
+    }
+};        
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Or using one for loop and using window_start to keep track of the window instead of using i - k 
+// to subtract the first element of the window from the sum of the window and then adding the next element to the sum of the window. 
+// This approach is more efficient because we don't have to do the subtraction and addition of the first and next element of the window respectively.
+
+class Solution {
+  public:
+    static int findMaxSumSubArray(int k, const vector<int>& arr) 
+    {
+      int sum = 0;
+      int maximum_sum = 0;
+      int window_start = 0;
+      for (int window_end = 0; window_end < arr.size(); window_end++) 
+      {
+        sum += arr[window_end];
+        if (window_end >= k - 1) 
+        {
+          maximum_sum = max(sum, maximum_sum);
+          sum -= arr[window_start++];
+        }
+      }
+      return maximum_sum;
+    }
+};        

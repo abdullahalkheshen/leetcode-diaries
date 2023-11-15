@@ -106,7 +106,11 @@ public:
         int ans = std::numeric_limits<int>::max();
         vector<int> sums;
         sums[0] = nums[0];
-        for (size_t i = 1; i < nums.size(); i++) sums[i] = sums[i-1] + nums[i];
+        for (size_t i = 1; i < nums.size(); i++) 
+        {
+            sums[i] = sums[i-1] + nums[i];
+        }
+
         for (int i = 0; i < nums.size(); i++)
         {
             int sum;

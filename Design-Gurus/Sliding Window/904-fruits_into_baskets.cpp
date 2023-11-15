@@ -155,7 +155,8 @@ class Solution
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach #3 Sliding Window
+// Approach #3 Fixed Sliding Window!
+
 
 /* 
     Intuition:
@@ -194,27 +195,45 @@ class Solution
 // The code of the above approach:
 class Solution
 {
-    public:
-        int find_length(vector<char> &arr)
-        {
-            unordered_map<char, int> basket;
-            int left, right;
+public:
+    int find_length(vector<char> &arr)
+    {
+        unordered_map<char, int> basket;
+        int left, right;
 
-            for (left = 0, right = 0; right < arr.size(); right++)
+        for (left = 0, right = 0; right < arr.size(); right++)
+        {
+            basket[arr[right]]++;
+            if (basket.size() > 2)
             {
-                basket[arr[right]]++;
-                while (basket.size() > 2)
-                {
-                    basket[arr[left]]--;
-                    if (basket[arr[left]] == 0)
-                    {
-                        basket.erase(arr[left]);
-                    }
-                    left++;
-                }
+                basket[arr[left]]--;
+                if (basket[arr[left]] == 0)
+                    basket.erase(arr[left++]);
             }
-            return right - left;
         }
-    
+        return right - left;
+    }
 };
 
+class Solution
+{
+public:
+    int find_length(vector<char> &arr)
+    {
+        int left=0;
+        int max_size=0;
+        unordered_map<char, int> basket;
+        for (int right = 0; right < arr.size(); right++)
+        {
+            basket[arr[right]]++;
+            while (basket.size() > 2)
+            {
+                basket[arr[left]]--;
+                if (basket[arr[left]] == 0)
+                    basket.erase(arr[left++]);
+            }
+            max_size = max(max_size, right-left+1);
+        }
+        return max_size;
+    }
+};

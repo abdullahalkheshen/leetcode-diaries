@@ -65,9 +65,9 @@ class Solution {
         window_sum += arr[window_end];
         if (window_end >= k-1)
         {
-            max_sum = max(max_sum, window_sum);
-            window_sum -= arr[window_start];
-            window_start++;
+          max_sum = max(max_sum, window_sum);
+          window_sum -= arr[window_start];
+          window_start++;
         }
         return max_sum;
       }

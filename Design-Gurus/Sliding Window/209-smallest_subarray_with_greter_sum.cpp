@@ -151,6 +151,7 @@ public:
         
         • Space complexity: O(n). Additional O(n) space for sums vector
 */
+
 int minSubArrayLen(int s, vector<int>& nums)
 {
     if (nums.size() == 0) return 0;
@@ -162,7 +163,10 @@ int minSubArrayLen(int s, vector<int>& nums)
     //sums[1]=A[0] : Sum of first 1 elements
     //ans so on...
 
-    for (int i = 1; i <= nums.size(); i++) sums[i] = sums[i - 1] + nums[i - 1];
+    for (int i = 1; i <= nums.size(); i++)
+    { 
+        sums[i] = sums[i - 1] + nums[i - 1];
+    }
         
     for (int i = 1; i <= nums.size(); i++) 
     {
@@ -208,9 +212,11 @@ int minSubArrayLen(int s, vector<int>& nums)
     int ans = INT_MAX;
     int sum = 0;
     int window_start = 0;
-    for (int window_end = 0; window_end < nums.size(); window_end++) {
+    for (int window_end = 0; window_end < nums.size(); window_end++) 
+    {
         sum += nums[window_end];
-        while (sum >= s) {
+        while (sum >= s) 
+        {
             ans = min(ans, window_end + 1 - window_start);
             sum -= nums[window_start++];
         }

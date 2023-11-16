@@ -158,12 +158,12 @@ class Solution
         {
             int max_size = 0;
             int window_start = 0;
-            int right_bound = 0;
+            int window_end = 0;
             unordered_map<char, int> map;
 
-            while(right_bound < str.length()) // or for(int right_bound=0; right_bound<str.length(); right_bound++)
+            while(window_end < str.length()) // or for(int window_end=0; window_end<str.length(); window_end++)
             {
-                map[str[right_bound]]++;
+                map[str[window_end]]++;
                 
                 while ((int)map.size() > k)
                 {
@@ -172,8 +172,8 @@ class Solution
                     window_start++;
                 }
                 // remember the maximum length so far
-                max_size = max(max_size, (right_bound - window_start + 1));
-                right_bound++;
+                max_size = max(max_size, (window_end - window_start + 1));
+                window_end++;
             }
             return max_size;
         }

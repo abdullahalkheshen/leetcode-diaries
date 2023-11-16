@@ -117,7 +117,7 @@ private:
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach#2 Sliding Window Ⅰ
+// Approach#2 Dynamic Sliding Window
 
 /* 
     Intuition:
@@ -182,7 +182,7 @@ class Solution
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Approach#2 Sliding Window ⅠⅠ
+// Approach#2 Fixed Sliding Window
 
 /* 
     Intuition:
@@ -224,22 +224,36 @@ class Solution {
 public:
 
     int length_of_longest_substring_K_distinct(string s, int k) {
-        int max_size = 0;
+        int window_start = 0;
         unordered_map<char, int> map;
 
         for (int windows_end = 0; windows_end < s.length(); windows_end++) 
         {
             map[s[windows_end]]++;
 
-            if (map.size() <= k) max_size++;
+
+            // we used if instead of while because we want to keep the window size same as max_size even if the window is invalid 
+            // because we have already found a valid window of length max_size before, so we may as well continue looking for a larger window.
+
+            if (map.size() <= k) window_start++;
             else 
             {
-                map[s[windows_end - max_size]]--;
-                if (map[s[windows_end - max_size]] == 0) map.erase(s[windows_end - max_size]);
+                // note that windows_end - window_start is the size of the window
+                // but map[s[windows_end - window_start]] is the left_boundmost character of the window to be removed from the map 
+                /* 
+                    If you're wondering how str[windows_end - window_start] is accessing the left_boundmost character of the maximum window,
+                    it's because we're dealing with indicies here, not the characters/numbers.  
+                    for example: if windows_end = 4 and window_start = 2, then windows_end - window_start = 2, and s[2] is the left_boundmost character of the window
+                
+                */
+
+                map[s[windows_end - window_start]]--; 
+                if (map[s[windows_end - window_start]] == 0) 
+                    map.erase(s[windows_end - window_start]);
             }
         }
 
-        return max_size;
+        return window_start;
     }
 };
 

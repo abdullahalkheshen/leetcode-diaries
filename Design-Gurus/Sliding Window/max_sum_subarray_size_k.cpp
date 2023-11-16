@@ -55,27 +55,23 @@ class Solution {
   public:
     static int findMaxSumSubArray(int k, const vector<int>& arr) 
     {
-      int sum = 0;
-      int maximum_sum = 0;
-      for(int i = 0; i < k; i++) 
-        sum += arr[i];
+        int maximum = 0;
+        int sum = 0;
+        for(int window_end = 0; window_end < k; window_end++) {
+            sum += arr[window_end];
+        }
+        maximum = max(sum, maximum);
 
-      maximum_sum = sum;
-      
-      for(int i = 0; i < arr.size(); i++) 
-      {
-        sum -= arr[i - k];
-        sum += arr[i];
-        maximum_sum = max(sum, maximum_sum);
-      }
-
-      return maximum_sum;
+        for(int window_end = k; window_end < arr.size(); window_end++) {
+            sum -= arr[window_end - k];
+            sum += arr[window_end];
+            maximum = max(sum, maximum);
+        }
+        return maximum;
     }
 };        
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Or using one for loop and using window_start to keep track of the window instead of using i - k 
-// to subtract the first element of the window from the sum of the window and then adding the next element to the sum of the window. 
-// This approach is more efficient because we don't have to do the subtraction and addition of the first and next element of the window respectively.
+
 
 class Solution {
   public:
@@ -87,7 +83,7 @@ class Solution {
       for (int window_end = 0; window_end < arr.size(); window_end++) 
       {
         sum += arr[window_end];
-        if (window_end >= k - 1) 
+        if (window_end - window_start + 1 == k) // Or window_end+1 >= k
         {
           maximum_sum = max(sum, maximum_sum);
           sum -= arr[window_start++];
@@ -95,4 +91,8 @@ class Solution {
       }
       return maximum_sum;
     }
-};        
+};
+
+// Reminder: Kth element is of k-1 index, nth element is of n-1 index, window_end element is of window_end-1 index and so on. 
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 

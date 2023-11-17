@@ -90,7 +90,7 @@ public:
 
                 if (basket.size() <= 2)
                 {
-                    max_length = max(max_length, (right-left+1)
+                    max_length = max(max_length, (right-left+1));
                 }
             }
         }
@@ -198,8 +198,8 @@ class Solution
 public:
     int find_length(vector<char> &arr)
     {
-        unordered_map<char, int> basket;
         int left, right;
+        unordered_map<char, int> basket;
 
         for (left = 0, right = 0; right < arr.size(); right++)
         {
@@ -208,32 +208,10 @@ public:
             {
                 basket[arr[left]]--;
                 if (basket[arr[left]] == 0)
-                    basket.erase(arr[left++]);
+                    basket.erase(arr[left]);
+                left++;
             }
         }
         return right - left;
-    }
-};
-
-class Solution
-{
-public:
-    int find_length(vector<char> &arr)
-    {
-        int left=0;
-        int max_size=0;
-        unordered_map<char, int> basket;
-        for (int right = 0; right < arr.size(); right++)
-        {
-            basket[arr[right]]++;
-            while (basket.size() > 2)
-            {
-                basket[arr[left]]--;
-                if (basket[arr[left]] == 0)
-                    basket.erase(arr[left++]);
-            }
-            max_size = max(max_size, right-left+1);
-        }
-        return max_size;
     }
 };

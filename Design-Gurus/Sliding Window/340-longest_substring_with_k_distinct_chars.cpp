@@ -168,7 +168,8 @@ class Solution
                 while ((int)map.size() > k)
                 {
                     map[str[window_start]]--;
-                    if (map[str[window_start]] == 0) map.erase(str[window_start]);
+                    if (map[str[window_start]] == 0) 
+                        map.erase(str[window_start]);
                     window_start++;
                 }
                 // remember the maximum length so far

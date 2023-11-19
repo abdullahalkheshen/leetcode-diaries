@@ -120,12 +120,12 @@
 using namespace std;
 #include <iostream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 class Solution {
     public:
-        int characterReplacement(string s, int k) {
+        int characterReplacement(string s, int k) 
+        {
             int low = 1;
             int high = s.length() + 1;
 
@@ -135,11 +135,11 @@ class Solution {
                 if (isValidSubstring(s, mid, k)) low = mid;
                 else high = mid;
             }
-            
             return low;
         }
 
-        bool isValidSubstring(const string& s, int substringLength, int k) {
+        bool isValidSubstring(const string& s, int substringLength, int k) 
+        {
             vector<int> counter(26, 0);
             int max_frequency = 0;
             int window_start = 0;
@@ -160,3 +160,197 @@ class Solution {
 };
 
 // -------------------------------------------------- Dynamic Sliding Window (Slow) --------------------------------------------------
+
+/* 
+    Intuition:
+        In the previous approach, our implementation of binary search makes use of a sliding window to check the validity condition. 
+        We explore the idea of sliding window from another angle in the current approach.
+        What if the question was about a specific character? Let's understand this with an example: s = "AABEAFACAAEAA" k = 1
+        Here, we are allowed to do a 1 operation. i.e., 1 replacement of a character with any other character. 
+        After the operation, we need to return the longest substring where all the letters are "A".
+        We are going to use a sliding window here as well, but this time the window's size (the number of characters in the window) isn't fixed.
+        Create two pointers that point to the start and end of the window. We also use a variable count to record the number of As in the current window. 
+        We call a window valid only if the difference between the size of the window and count is <= to k. (end—start+1)— count <= k
+        The window expands when the pointer end moves forward, and it shrinks when start moves ahead.
+        The variable count increases when the window grows, and the new character entering the window is "A" or "a" for some problem given/inputs.
+        On the opposite side,  we decrease count when the window shrinks and the outgoing character is A.
+        In the beginning, start and end points to -1. Thereby creating a sliding window of size 0 (end-start+1 = —1+0+1 = 0). which's valid window as per the condition.
+        While the window is valid, we expand the window by moving the end pointer forward. As we do so, we also note the maximum length of the window seen so far, max_size. 
+        When the window becomes invalid, we shrink the size by moving the start pointer forward. start pointer moves until the window becomes valid again. 
+        The process continues until the window reaches the right edge of the string and can't move any further.
+        In the end, max_size contains our answer.
+    
+    Algorithm:
+        1. Loop over the string to collect all the unique characters. Store them in a set allLetters .
+        2. Initialize max_size to 0. This variable would contain the final answer.
+        3. For each letter letter present in allLetters, do the following.
+            a. Declare three variables, start, end, and count, and initialize them to O.
+            b. Iterate end from index 0 to the end of the given string.
+                a. If end points at the same letter as the character stored in letter, then increase count by 1.
+                b. If end points to a different letter
+                    • Check if the current window is valid, if it is valid, then move end to the next index.
+                    • Ifthe window is not valid, we move start in steps of 1 until the window becomes valid again. 
+                        Before every step, if start is pointing at a character same as letter, then decrease count by 1.
+            c. Compare max_size with the current length of the window. If the current length is bigger, then update mar Length.
+        4. Return max_size back to the caller.
+    
+    Complexity Analysis:
+        Let n be the number of characters in the string and m be the number of unique characters.
+        • Time complexity: O(nm). We iterate over each unique character once, which requires O(k) time. 
+            We move a sliding window for each unique character from left to right of the string. As the window moves, each character of the string is visited at most two times. 
+            Once when it enters the window and again when it leaves the window. This adds O(n) time complexity for each iteration. 
+            So the final time complexity is O(nm). For all uppercase English letters, the maximum value of rn would be 26.
+        
+        • Space complexity: O(m). We use an auxiliary set to store all unique characters, so the space complexity required here is O(m). 
+            Since there are only uppercase English letters in the string, m = 26.
+*/
+
+#include <unordered_set>
+
+int characterReplacement(string s, int k) {
+    unordered_set<char> allLetters;
+
+    for (int i = 0; i < s.length(); i++) 
+    {
+        allLetters.insert(s[i]);
+    }
+
+    int max_size = 0;
+    for (char letter : allLetters) 
+    {
+        int max_char_count = 0;
+        
+        int start = 0;
+        for (int end = 0; end < s.length(); end += 1) 
+        {
+            if (s[end] == letter) max_char_count++;
+            while (!((end-start+1) - max_char_count <= k)) 
+            {
+                if (s[start++] == letter) 
+                {
+                    max_char_count--;
+                }
+            }
+            max_size = max(max_size, (end-start+1));
+        }
+    }
+    return max_size;
+}
+
+// -------------------------------------------------- Dynamic Sliding Window (Fast) --------------------------------------------------
+
+/* 
+    Intuition:
+        In the first approach, where we apply binary search to different lengths of substrings. 
+        Depending on whether a substring meets the specified conditions or not, we increase or decrease the length of the substring. 
+        We use a sliding window-based approach to test the validity condition.
+        Note that the size of the sliding window does not change while it moves across the string. 
+        If it does, we try again from the beginning, increasing the window size (or decreasing it if it remains invalid). 
+        In this way, we try to find the longest valid window. But do we need to start at the beginning of the string again?
+        Recall that when a string of length 1 is valid, all its substrings form a valid string. 
+        
+        Let's try looking at it from the other side. 
+        Suppose we have identified a valid substring/window of length l—1. To find an even longer valid window, we should try adding the next alphabet. 
+        This temporarily increases the size of the window to l. We check whether it forms a valid window or not. 
+        If not, we move the beginning of the window to the right, which resets the window size back to l—1 and effectively moves the window to the right.
+        We keep moving it until we reach a point where we find a valid window of size l. Now, we don't need to stop there. 
+        We can continue looking for a valid window Of size l+1. We continue this process until the window hits the right edge Of the string. 
+        The size of the window at the end would be our answer.
+        The key takeaway here is that once we have found a valid window, we don't need to decrease the size of it. 
+        The window keeps moving toward the right. At each step, even if the window becomes invalid, we never decrease its size. 
+        We increase the size only when we find a valid window of larger size.
+        
+        Now let's look at it a bit more formally We begin with a sliding window of size O positioned at the left edge of the string. We consider an empty window as valid.
+        start points at the first character of the window initially positioned at index 0. end points at the last character of the window initially positioned at index —1. 
+        We can see that the window's size is O (end—start+1 —  we also consult our old friend, the frequency map. It stores a map of characters to their frequencies in the window; 
+        Our objective is to find the longest valid window. So, whenever we see a valid window, we try to expand its size by moving the end pointer forward. 
+        As we move the pointer forward, we update the frequencyMap as well. The frequency map helps us keep track of the character that appears most frequently in the window. 
+        We compare the frequency of the newly added character with the maximum frequency of any character seen so far - maxFrequency. We update maxFrequency when we find a new maximum.
+        The window size increases only when maxFrequency finds a new maximum. For this, we always want the following condition to hold true -windowSize — ma;rFrequency k
+        We stop moving the end pointer forward, or in other words, stop expanding the window when it becomes invalid. 
+        Say the size of the window when it becomes invalid is l. We know the previous window with the size l — 1 was valid. 
+        So, we move the prior window of length l — 1 toward the right To do so, the start pointer moves one step further. 
+        Remember that the end pointer had already moved, so we don't need to move the end pointer again.
+        At this point, the last valid window has moved one step to the right, but it might still be invalid. 
+        As explained earlier, we are only interested in larger windows, so we don't need to decrease the window size. 
+        We move the window of size i — 1 further and further to the right until it becomes valid again.
+        If we come across a valid window, we try to expand it as much as possible, and the process continues until the end pointer reaches the rightmost alphabet of the string. 
+        At this point, the size of the window indicates the longest valid substring seen yet.
+
+    Algorithm
+        1. Initialize start = 0 and end = 0. They represent the indexes of the window's left most and the most characters resepectively.
+        2. Initialize a hash map frequencyMap to contain characters and their frequencies.
+        3. Initially the size of the window is 0, which we consider as valid. Expand the window by moving end pointer forward. We do so until the window becomes invalid.
+        4. Every time end moves forward, we update the frquency map of the newly added element. We update maxFrequency if its frequency is the maximum we have seen so far.
+            We check for validity using the following formula: (end + 1 — start) — maxFrequency < k
+        5. If the window is invalid, move the start pointer ahead by one step. Every time start moves forward, we update the frequency of the outgoing element in the map. 
+            At this point the size of the window is equal to the longest valid window we have seen so far. We make a note of the window size in a variable longestSubstringLength.
+        6. We repeat the last two steps until the window reaches the right edge of the string.
+        7. longestSubstringLength contains the answer.
+    
+    Complexity Analysis
+        If there are n characters in the given string-
+        • Time complexity: O(n). 
+            In this approach, we access each index of the string at most two times. When it is added to the sliding window, and when it is removed from the sliding window. 
+            The sliding window always moves forward. In each step, we update the frequency map, maxFrequency, and check for validity, they are all constant-time operations. 
+            To sum up, the time complexity is proportional to the number of characters in the string - O(n).
+        
+        • Space complexity: O(m). 
+            Similar to the previous approaches, this approach requires an auxiliary frequency map.
+            The maximum number of keys in the map equals the number of unique characters in the string. 
+            If there are m unique characters, then the memory required is proportional to m. So the space complexity is O(m). 
+            Considering uppercase English letters only, m 26.
+*/
+
+#include <unordered_map>
+class Solution {
+public:
+    int characterReplacement(string s, int k) 
+    {
+        int max_size = 0;
+        int max_char_count = 0;
+        int window_start = 0;
+        int window_end = 0;
+        unordered_map<char, int> map;
+        while(window_end < s.size())
+        {
+            map[s[window_end]]++;
+            max_char_count = max(max_char_count, map[s[window_end]]);
+            if((window_end - window_start + 1) - max_char_count > k )
+            {
+                map[s[window_start++]]--;
+            }
+            max_size = max(max_size, window_end-window_start+1);
+            window_end++;
+        }
+        return max_size;
+    }
+};
+
+
+// Or inside while loop we can use a while loop instead of if condition because we need to move window_start until the window becomes valid again. 
+// here while loop and if condition are same because we are moving window_start by 1 in both cases. 
+
+class Solution {
+public:
+    int characterReplacement(string s, int k) 
+    {
+        int max_size = 0;
+        int max_char_count = 0;
+        int window_start = 0;
+        int window_end = 0;
+        unordered_map<char, int> map;
+        while(window_end < s.size())
+        {
+            map[s[window_end]]++;
+            max_char_count = max(max_char_count, map[s[window_end]]);
+            while((window_end - window_start + 1) - max_char_count > k)
+            {
+                map[s[window_start++]]--;
+            }
+            max_size = max(max_size, window_end-window_start+1);
+            window_end++;
+        }
+        return max_size;
+    }
+};

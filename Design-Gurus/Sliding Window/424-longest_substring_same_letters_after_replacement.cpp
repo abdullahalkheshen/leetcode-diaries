@@ -125,25 +125,6 @@ using namespace std;
 
 class Solution {
     public:
-        bool isValidSubstring(const string& s, int substringLength, int k) {
-            vector<int> counter(26, 0);
-            int max_frequency = 0;
-            int window_start = 0;
-            
-            for (int window_end = 0; window_end < s.length(); window_end++) 
-            {
-                counter[s[window_end]] += 1;
-                if (window_end + 1 - window_start > substringLength) 
-                {
-                    counter[s[window_start++]]--;
-                }
-                max_frequency = max(max_frequency, counter[s[window_end]]);
-                
-                if (substringLength - max_frequency <= k) return true;
-            }
-            return false;
-        }
-
         int characterReplacement(string s, int k) {
             int low = 1;
             int high = s.length() + 1;
@@ -157,8 +138,25 @@ class Solution {
             
             return low;
         }
+
+        bool isValidSubstring(const string& s, int substringLength, int k) {
+            vector<int> counter(26, 0);
+            int max_frequency = 0;
+            int window_start = 0;
+            
+            for (int window_end = 0; window_end < s.length(); window_end++) 
+            {
+                counter[s[window_end] - 'a'] += 1;
+                if (window_end + 1 - window_start > substringLength) 
+                {
+                    counter[s[window_start++] - 'a']--;
+                }
+                max_frequency = max(max_frequency, counter[s[window_end] - 'a']);
+                
+                if (substringLength - max_frequency <= k) return true;
+            }
+            return false;
+        }
 };
 
 // -------------------------------------------------- Dynamic Sliding Window (Slow) --------------------------------------------------
-
-

@@ -65,11 +65,19 @@ using namespace std;
 #include <iostream>
 #include <string>
 
-class Solution {
+class Solution 
+{
+public:
+    bool checkInclusion(string s1, string s2) 
+    {
+        permute(s1, s2, 0);
+        return flag;
+    }
+
     bool flag = false;
 
     string swap(string s, int i0, int i1) 
-    {
+    {https://battlebornbatteries.com/watt-hours-to-amp-hours/
         if (i0 == i1) return s;
             
         string s1 = s.substr(0, i0);
@@ -79,28 +87,21 @@ class Solution {
         return s1 + s[i1] + s2 + s[i0] + s3;
     }
 
-    void permute(string s1, string s2, int l) 
+    void permute(string s1, string s2, int current_index) 
     {
-        if (l == s1.length()) 
+        if (current_index == s1.length()) 
         {
             if (s2.find(s1) != string::npos) flag = true;
         }
         else 
         {
-            for (int i = l; i < s1.length(); i++) 
+            for (int i = current_index; i < s1.length(); i++) 
             {
-                s1 = swap(s1, l, i);
-                permute(s1, s2, l + 1);
-                s1 = swap(s1, l, i);
+                s1 = swap(s1, current_index, i);
+                permute(s1, s2, current_index+1);
+                s1 = swap(s1, current_index, i);
             }
         }
-    }
-
-public:
-    bool checkInclusion(string s1, string s2) 
-    {
-        permute(s1, s2, 0);
-        return flag;
     }
 };
 

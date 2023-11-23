@@ -77,7 +77,7 @@ public:
     bool flag = false;
 
     string swap(string s, int i0, int i1) 
-    {https://battlebornbatteries.com/watt-hours-to-amp-hours/
+    {
         if (i0 == i1) return s;
             
         string s1 = s.substr(0, i0);
@@ -129,18 +129,18 @@ public:
 class Solution {
 public:
     bool checkInclusion(std::string s1, std::string s2) {
-        s1 = sortString(s1);
+        s1 = sort_string(s1);
         for (int i = 0; i <= static_cast<int>(s2.length()) - static_cast<int>(s1.length()); ++i) 
         {
-            if (s1 == sortString(s2.substr(i, s1.length()))) return true;
+            if (s1 == sort_string(s2.substr(i, s1.length()))) return true;
         }
         return false;
     }
 
 private:
-    std::string sortString(std::string s) 
+    std::string sort_string(std::string str) 
     {
-        std::sort(s.begin(), s.end());
-        return s;
+        std::sort(str.begin(), str.end());
+        return str;
     }
 };

@@ -196,12 +196,13 @@ class Solution {
     
     Complexity Analysis:
         Let n be the number of characters in the string and m be the number of unique characters.
-        • Time complexity: O(nm). We iterate over each unique character once, which requires O(k) time. 
+        • Time complexity: O(nm). 
+            We iterate over each unique character once, which requires O(k) time. 
             We move a sliding window for each unique character from left to right of the string. As the window moves, each character of the string is visited at most two times. 
-            Once when it enters the window and again when it leaves the window. This adds O(n) time complexity for each iteration. 
-            So the final time complexity is O(nm). For all uppercase English letters, the maximum value of rn would be 26.
+            Once when it enters the window and again when it leaves the window. This adds O(n) time complexity for each iteration. So the final time complexity is O(nm). For all uppercase English letters, the maximum value of rn would be 26.
         
-        • Space complexity: O(m). We use an auxiliary set to store all unique characters, so the space complexity required here is O(m). 
+        • Space complexity: O(m). 
+            We use an auxiliary set to store all unique characters.
             Since there are only uppercase English letters in the string, m = 26.
 */
 

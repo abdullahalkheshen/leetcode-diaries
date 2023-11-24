@@ -144,3 +144,63 @@ private:
         return str;
     }
 };
+// ------------------------------------------------ Solution 3: Using Hashmap ------------------------------------------------
+
+/* 
+    Intuition: 
+        As discussed above, one string will be a permutation of another string only if both of them contain the same characters with the same frequency. 
+        We can consider every possible substring in the long string s2 of the same length as that of sl and check the frequency of occurence of the characters appearing in the two. 
+        If the frequencies of every letter match exactly, then only sl 's permutation can be a substring of 82. 
+        In order to implement this approach, instead of sorting and then comparing the elements for equality, we make use of a hashmap slmap which stores the frequency of occurence of all the characters in the short string sl. 
+        We consider every possible substring of s2 of the same length as that of sl. find its corresponding hashmap as well, namely s2map. 
+        Thus, the substrings considered can be viewed as a window of length as that of sl iterating over s2. 
+        If the two hashmaps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
+    
+    Algorithm:
+        1. Store the frequency of occurence of all the characters of the short string s1s1s1 in the hashmap slmap.
+        2. Consider every possible substring of the long string s2s2s2 having length equal to the length of s1s1s1. 
+            For every such substring, store the frequency of occurence of all the characters of the substring in the hashmap s2map.
+        3. If the two hashmaps obtained are identical for any such window, we can conclude that s1s1s1's permutation is a substring of s2s2s2, otherwise not.
+
+    Complexity Analysis:
+        Let 11 be the length of string sl and 12 be the length of string s2.
+        • Time complexity: O(l1 + 26l1(l2 — l1)) . 
+            The hashmap contains at most 26 keys.
+        • Space complexity. O(1). 
+            Hashmap contains at most 26 key-value pairs.
+*/
+
+#include <unordered_map>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    bool checkInclusion(string s1, string s2) 
+    {
+        if (s1.length() > s2.length()) return false;
+        unordered_map<char, int> s1map;
+        for (int i = 0; i < s1.length(); i++) s1map[s1[i]]++;
+        for (int i = 0; i <= s2.length() - s1.length(); i++) 
+        {
+            unordered_map<char, int> s2map;
+            for (int j = 0; j < s1.length(); j++) 
+            {
+                s2map[s2[i + j]]++;
+            }
+            if (matches(s1map, s2map)) return true;
+        }
+        return false;
+    }
+
+private:
+    bool matches(unordered_map<char, int>& s1map, unordered_map<char, int>& s2map) 
+    {
+        for (auto& pair : s1map) 
+        {
+            char key = pair.first;
+            if (s1map[key] != s2map[key]) return false;
+        }
+        return true;
+    }
+};

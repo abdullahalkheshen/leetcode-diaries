@@ -41,7 +41,7 @@
         Note: this approach is included because it is a logical first step towards building an efficient solution. However, it is a brute-force approach and is not expected to pass all test cases. Readers are still recommended to read it because it helps to understand the next following approaches.
         The simplest method is to generate all the permutations of the short string and to check if the generated permutation is a substring of the longer string.
 
-        In order to generate all the possible pairings, we make use of a function permute(string_1, string_2, current_index). This function creates all the possible permutations of the short string s1s1s1.
+        In order to generate all the possible pairings, we make use of a function permute(string_1, string_2, current_index). This function creates all the possible permutations of the short string s1.
 
         To do so, permute takes the index of the current element current_indexcurrent\_indexcurrent_index as one of the arguments. Then, it swaps the current element with every other element in the array, lying towards its right, so as to generate a new ordering of the array elements. After the swapping has been done, it makes another call to permute but this time with the index of the next element in the array. While returning back, we reverse the swapping done in the current function call.
 
@@ -114,13 +114,13 @@ public:
         Thus, the relative order of the characters of the short string will be preserved as a substring in the long string.
 
     Algorithm:
-        1. Sort the short string s1s1s1.
-        2. For every substring of the long string s2s2s2 having length equal to the length of s1s1s1, sort this substring as well.
-        3. If the two sorted strings obtained in the above steps are equal, then s1s1s1 and its permutation are present as a substring in s2s2s2.
+        1. Sort the short string s1.
+        2. For every substring of the long string s2 having length equal to the length of s1, sort this substring as well.
+        3. If the two sorted strings obtained in the above steps are equal, then s1 and its permutation are present as a substring in s2.
     
     Complexity Analysis:
         Let n be the length of sl
-        • Time complexity: O(nlogn). We traverse over the string s2s2s2 of length n once. Apart from this, we sort the short string s1s1s1 of length l and every substring of s2s2s2 having length l.
+        • Time complexity: O(nlogn). We traverse over the string s2 of length n once. Apart from this, we sort the short string s1 of length l and every substring of s2 having length l.
             Sorting a string of length l costs O(llogl) time. Thus, the overall time complexity is O(nlogn + l(l + logl)).
         • Space complexity: O(l). Sorting a string of length l costs O(l) space.
 */
@@ -128,7 +128,7 @@ public:
 #include <algorithm>
 class Solution {
 public:
-    bool checkInclusion(std::string s1, std::string s2) {
+    bool checkInclusion(string s1, string s2) {
         s1 = sort_string(s1);
         for (int i = 0; i <= static_cast<int>(s2.length()) - static_cast<int>(s1.length()); ++i) 
         {
@@ -138,9 +138,9 @@ public:
     }
 
 private:
-    std::string sort_string(std::string str) 
+    string sort_string(string str) 
     {
-        std::sort(str.begin(), str.end());
+        sort(str.begin(), str.end());
         return str;
     }
 };
@@ -157,10 +157,10 @@ private:
         If the two hashmaps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
     
     Algorithm:
-        1. Store the frequency of occurence of all the characters of the short string s1s1s1 in the hashmap slmap.
-        2. Consider every possible substring of the long string s2s2s2 having length equal to the length of s1s1s1. 
+        1. Store the frequency of occurence of all the characters of the short string s1 in the hashmap slmap.
+        2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
             For every such substring, store the frequency of occurence of all the characters of the substring in the hashmap s2map.
-        3. If the two hashmaps obtained are identical for any such window, we can conclude that s1s1s1's permutation is a substring of s2s2s2, otherwise not.
+        3. If the two hashmaps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
 
     Complexity Analysis:
         Let 11 be the length of string sl and 12 be the length of string s2.
@@ -200,6 +200,68 @@ private:
         {
             char key = pair.first;
             if (s1map[key] != s2map[key]) return false;
+        }
+        return true;
+    }
+};
+
+// ------------------------------------------------ Solution 4: Using Array ------------------------------------------------
+
+/* 
+    Intuition:
+        Instead of making use of a special HashMap datastructure just to store the frequency of occurence of characters, we can use a simpler array data structure to store the frequencies.
+        Given strings contains only lowercase alphabets to ('a' to 'z'). So we need to take an array of size 26.
+        The rest of the process remains the same as the last approach.
+    
+    Algorithm:
+        // like pseudocode with some code:
+        1. Store the frequency of occurence of all the characters of the short string s1 in the array s1map.
+        2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
+            For every such substring, store the frequency of occurence of all the characters of the substring in the array s2map.
+        3. If the two arrays obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
+        4. To compare the two arrays, we compare the frequency of occurence of each character. 
+            Since there can be a total of 26 characters only, we can compare the two arrays in constant time.
+        5. 
+
+    Complexity Analysis
+        Let l1 be the length of string s1 and l2 be the length of string s2.
+        • Time complexity: 0(l1 + 26*(12 — l1)).
+        • Space complexity: 0(1).
+*/
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Solution {
+public:
+    bool checkInclusion(string s1, string s2) {
+        if (s1.length() > s2.length()) return false;
+        
+        vector<int> s1map(26, 0);
+        vector<int> s2map(26, 0);
+        
+        for (int i = 0; i < s1.length(); i++) 
+        {
+            s1map[s1[i] - 'a']++;
+            s2map[s2[i] - 'a']++;
+        }
+        
+        for (int i = 0; i < s2.length() - s1.length(); i++) 
+        {
+            if (matches(s1map, s2map)) return true;
+            s2map[s2[i + s1.length()] - 'a']++;
+            s2map[s2[i] - 'a']--;
+        }
+        
+        return matches(s1map, s2map);
+    }
+
+    bool matches(vector<int>& s1map, vector<int>& s2map) 
+    {
+        for (int i = 0; i < 26; i++) 
+        {
+            if (s1map[i] != s2map[i]) return false;
         }
         return true;
     }

@@ -225,8 +225,9 @@ private:
 
     Complexity Analysis
         Let l1 be the length of string s1 and l2 be the length of string s2.
-        • Time complexity: 0(l1 + 26*(12 — l1)).
+        • Time complexity: 0(l1 + 26l1(12 — l1)).
         • Space complexity: 0(1).
+            s1map & s2map of size 26 is used.
 */
 
 #include <iostream>
@@ -238,6 +239,7 @@ public:
     bool checkInclusion(string s1, string s2) {
         if (s1.length() > s2.length()) return false;
         
+        // Vector/Array instead of HashMap
         vector<int> s1map(26, 0);
         vector<int> s2map(26, 0);
         
@@ -266,3 +268,65 @@ public:
         return true;
     }
 };
+
+// ------------------------------------------------ Solution 5: Using Sliding Window ------------------------------------------------
+
+/* 
+    Intuition:
+        In the last approach, we made use of a special array to store the frequency of occurence of characters in the substrings considered. 
+        Instead of making use of a special array, we can make use of a generic map to store the frequency of occurence of characters in the substrings considered.
+        The rest of the process remains the same as the last approach.
+    
+    Algorithm:
+        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1map.
+        2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
+            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2map.
+        3. If the two maps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
+        4. To compare the two maps, we compare the frequency of occurence of each character. 
+            Since there can be a total of 26 characters only, we can compare the two maps in constant time.
+        
+    Complexity Analysis:
+        Let l1 be the length of string s1 and l2 be the length of string s2.
+        • Time complexity: 0(l1 + 26*(12 — l1)).
+        • Space complexity: 0(1).
+*/
+
+
+#include <string>
+#include <unordered_map>
+
+bool checkInclusion(string s1, string s2) {
+    if (s1.length() > s2.length()) return false;
+        
+    unordered_map<char, int> s1map;
+
+    for (char c : s1) s1map[c]++;
+
+    for (int i = 0; i <= s2.length() - s1.length(); ++i) 
+    {
+        unordered_map<char, int> s2map;
+        for (int j = 0; j < s1.length(); ++j) 
+        {
+            s2map[s2[i + j]]++;
+        }
+
+        if (matches(s1map, s2map)) return true;
+    }
+
+    return false;
+}
+
+bool matches(const unordered_map<char, int>& s1map, const unordered_map<char, int>& s2map) {
+    for (int i = 0; i < 26; i++) 
+    {
+        if (s1map[i] != s2map[i]) return false;
+    }
+    return true;
+
+    // OR
+    /* for (const auto& [key, value] : s1map) 
+    {
+        if (s2map[key] != value) return false;
+    }
+    return true; */
+}

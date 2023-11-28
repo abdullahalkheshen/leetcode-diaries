@@ -330,3 +330,67 @@ bool matches(const unordered_map<char, int>& s1map, const unordered_map<char, in
     }
     return true; */
 }
+
+// ------------------------------------------------ Solution 6: Optimized Sliding Window ------------------------------------------------
+
+/* 
+    Intuition:
+        The last approach can be optimized, if instead of comparing all the elements of the hashmaps for every updated s2maps2maps2map corresponding to every window of s2s2s2 considered, we keep a track of the number of elements which were already matching in the earlier hashmap and update just the count of matching elements when we shift the window towards the right.
+
+        To do so, we maintain a countcountcount variable, which stores the number of characters(out of the 26 alphabets), which have the same frequency of occurence in s1s1s1 and the current window in s2s2s2. When we slide the window, if the deduction of the last element and the addition of the new element leads to a new frequency match of any of the characters, we increment the countcountcount by 1. If not, we keep the countcountcount intact. But, if a character whose frequency was the same earlier(prior to addition and removal) is added, it now leads to a frequency mismatch which is taken into account by decrementing the same countcountcount variable. If, after the shifting of the window, the countcountcount evaluates to 26, it means all the characters match in frequency totally. So, we return a True in that case immediately.
+    
+    Algorithm:
+        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1map.
+        2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
+            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2map.
+        3. If the two maps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
+        4. To compare the two maps, we compare the frequency of occurence of each character. 
+            Since there can be a total of 26 characters only, we can compare the two maps in constant time.
+    
+    Complexity Analysis:
+        Let l1 be the length of string s1 and l2 be the length of string s2.
+        • Time complexity: 0(l1 + (12 — l1)).
+        • Space complexity: 0(1).
+*/
+
+// Code:
+#include <string>
+#include <unordered_map>
+
+class Solution
+{
+    public:
+    bool check_include(string s1, string s2)
+    {
+        if (s1.length() > s2.length()) return false;
+        
+        unordered_map<char, int> s1map;
+        unordered_map<char, int> s2map;
+        for(int i = 0; i < s1.length(); i++)
+        {
+            s1map[s1[i]]++;
+            s2map[s2[i]]++;
+        }
+        int count = 0;
+        for(int i = 0; i < 26; i++)
+        {
+            if(s1map[i] == s2map[i]) count++;
+        }
+        for(int i = 0; i < s2.length() - s1.length(); i++)
+        {
+            if(count == 26) return true;
+
+            int r = s2[i + s1.length()] - 'a';
+            int l = s2[i] - 'a';
+            
+            s2map[r]++;
+            if(s2map[r] == s1map[r]) count++;
+            else if(s2map[r] == s1map[r] + 1) count--;
+            
+            s2map[l]--;
+            if(s2map[l] == s1map[l]) count++;
+            else if(s2map[l] == s1map[l] - 1) count--;
+        }
+        return count == 26;
+    }
+};

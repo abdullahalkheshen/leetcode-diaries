@@ -240,30 +240,30 @@ public:
         if (s1.length() > s2.length()) return false;
         
         // Vector/Array instead of HashMap
-        vector<int> s1map(26, 0);
-        vector<int> s2map(26, 0);
+        vector<int> s1vector(26, 0);
+        vector<int> s2vector(26, 0);
         
         for (int i = 0; i < s1.length(); i++) 
         {
-            s1map[s1[i] - 'a']++;
-            s2map[s2[i] - 'a']++;
+            s1vector[s1[i] - 'a']++;
+            s2vector[s2[i] - 'a']++;
         }
         
         for (int i = 0; i < s2.length() - s1.length(); i++) 
         {
-            if (matches(s1map, s2map)) return true;
-            s2map[s2[i + s1.length()] - 'a']++;
-            s2map[s2[i] - 'a']--;
+            if (matches(s1vector, s2vector)) return true;
+            s2vector[s2[i + s1.length()] - 'a']++;
+            s2vector[s2[i] - 'a']--;
         }
         
-        return matches(s1map, s2map);
+        return matches(s1vector, s2vector);
     }
 
-    bool matches(vector<int>& s1map, vector<int>& s2map) 
+    bool matches(vector<int>& s1map, vector<int>& s2vector) 
     {
         for (int i = 0; i < 26; i++) 
         {
-            if (s1map[i] != s2map[i]) return false;
+            if (s1map[i] != s2vector[i]) return false;
         }
         return true;
     }
@@ -295,41 +295,45 @@ public:
 #include <string>
 #include <unordered_map>
 
-bool checkInclusion(string s1, string s2) {
-    if (s1.length() > s2.length()) return false;
+class Solution 
+{
+public:
+    bool checkInclusion(string s1, string s2) 
+    {
+        if (s1.length() > s2.length()) return false;
         
-    unordered_map<char, int> s1map;
-
-    for (char c : s1) s1map[c]++;
-
-    for (int i = 0; i <= s2.length() - s1.length(); ++i) 
-    {
-        unordered_map<char, int> s2map;
-        for (int j = 0; j < s1.length(); ++j) 
+        unordered_map<char, int> s1map;
+        for (char c : s1) s1map[c]++;
+        
+        for (int i = 0; i <= s2.length() - s1.length(); ++i) 
         {
-            s2map[s2[i + j]]++;
+            unordered_map<char, int> s2map;
+            for (int j = 0; j < s1.length(); ++j) 
+            {
+                s2map[s2[i + j]]++;
+            }
+            
+            if (matches(s1map, s2map)) return true;
         }
-
-        if (matches(s1map, s2map)) return true;
+        
+        return false;
     }
 
-    return false;
-}
-
-bool matches(const unordered_map<char, int>& s1map, const unordered_map<char, int>& s2map) {
-    for (int i = 0; i < 26; i++) 
+    bool matches(const unordered_map<char, int>& s1map, const unordered_map<char, int>& s2map) 
     {
-        if (s1map[i] != s2map[i]) return false;
+        for (int i = 0; i < 26; i++) 
+        {
+            if (s1map[i] != s2map[i]) return false;
+        }
+        return true;
+        // OR
+        /* for (const auto& [key, value] : s1map) 
+        {
+            if (s2map[key] != value) return false;
+        }
+        return true; */
     }
-    return true;
-
-    // OR
-    /* for (const auto& [key, value] : s1map) 
-    {
-        if (s2map[key] != value) return false;
-    }
-    return true; */
-}
+};
 
 // ------------------------------------------------ Solution 6: Optimized Sliding Window ------------------------------------------------
 

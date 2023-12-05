@@ -65,16 +65,35 @@ using namespace std;
 #include <iostream>
 #include <string>
 
+// s1 = "oidbcaf" and s2 = "abc"
 class Solution 
 {
 public:
+    bool flag = false;
+    
     bool checkInclusion(string s1, string s2) 
     {
         permute(s1, s2, 0);
         return flag;
     }
 
-    bool flag = false;
+    void permute(string s1, string s2, int current_index) 
+    {
+        if (current_index == s1.length())
+        {
+            if (s2.find(s1) != string::npos) flag = true;
+        }
+        else 
+        {
+            // three iterations:
+            for (int next_index=current_index; next_index<s1.length(); next_index++)
+            {
+                s1 = swap(s1, current_index, next_index);
+                permute(s1, s2, current_index+1);
+                s1 = swap(s1, current_index, next_index);
+            }
+        }
+    }
 
     string swap(string s, int i0, int i1) 
     {
@@ -85,23 +104,6 @@ public:
         string s3 = s.substr(i1 + 1);
 
         return s1 + s[i1] + s2 + s[i0] + s3;
-    }
-
-    void permute(string s1, string s2, int current_index) 
-    {
-        if (current_index == s1.length()) 
-        {
-            if (s2.find(s1) != string::npos) flag = true;
-        }
-        else 
-        {
-            for (int i = current_index; i < s1.length(); i++) 
-            {
-                s1 = swap(s1, current_index, i);
-                permute(s1, s2, current_index+1);
-                s1 = swap(s1, current_index, i);
-            }
-        }
     }
 };
 

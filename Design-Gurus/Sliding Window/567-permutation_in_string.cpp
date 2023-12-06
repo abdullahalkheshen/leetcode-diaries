@@ -111,9 +111,7 @@ public:
 // ------------------------------------------------ Solution 2: Using sorting ------------------------------------------------
 /* 
     Intuition:
-        If we sort both the strings, the permutations of the short string will be a substring of the long string. 
-        This is because when we sort the strings, the relative order of the characters within the string doesn't change. 
-        Thus, the relative order of the characters of the short string will be preserved as a substring in the long string.
+        The idea behind this approach is that one string will be a permutation of another string only if both of them contain the same characters the same number of times. One string x is a permutation of other string y only if sorted(x)=sorted(y).
 
     Algorithm:
         1. Sort the short string s1.
@@ -121,10 +119,15 @@ public:
         3. If the two sorted strings obtained in the above steps are equal, then s1 and its permutation are present as a substring in s2.
     
     Complexity Analysis:
-        Let n be the length of sl
-        • Time complexity: O(nlogn). We traverse over the string s2 of length n once. Apart from this, we sort the short string s1 of length l and every substring of s2 having length l.
-            Sorting a string of length l costs O(llogl) time. Thus, the overall time complexity is O(nlogn + l(l + logl)).
-        • Space complexity: O(l). Sorting a string of length l costs O(l) space.
+        Let n be the length of sl.
+        Let 11 be the length of string s1 and 12 be the length of string s2.
+        • Time complexity: O(11 log(l1) + (l2 - l1)l1 log(l1)). 
+            Here, we sort the short string s1 only once. 
+            After this, we compare every substring of length l1 in s2 with s1. 
+            Sorting l1 elements takes O(l1 log(l1)) time. 
+            After this, every comparison takes O(l1) time, since we need to compare l1 elements of both the strings. 
+            Thus, the total time taken is O(11 log(l1) + (l2 - l1)l1 log(l1)).
+        • Space complexity: 0(11). t array is used.
 */
 
 #include <algorithm>

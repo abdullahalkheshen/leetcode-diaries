@@ -95,7 +95,7 @@ public:
         }
     }
 
-    string swap(string s, int i0, int i1) 
+    string swap(string s, int i0, int i1)
     {
         if (i0 == i1) return s;
             
@@ -106,7 +106,6 @@ public:
         return s1 + s[i1] + s2 + s[i0] + s3;
     }
 };
-
 
 // ------------------------------------------------ Solution 2: Using sorting ------------------------------------------------
 /* 
@@ -133,7 +132,8 @@ public:
 #include <algorithm>
 class Solution {
 public:
-    bool checkInclusion(string s1, string s2) {
+    bool checkInclusion(string s1, string s2) 
+    {
         s1 = sort_string(s1);
         for (int i = 0; i <= static_cast<int>(s2.length()) - static_cast<int>(s1.length()); ++i) 
         {
@@ -142,13 +142,13 @@ public:
         return false;
     }
 
-private:
     string sort_string(string str) 
     {
         sort(str.begin(), str.end());
         return str;
     }
 };
+
 // ------------------------------------------------ Solution 3: Using Hashmap ------------------------------------------------
 
 /* 
@@ -157,14 +157,14 @@ private:
         We can consider every possible substring in the long string s2 of the same length as that of sl and check the frequency of occurence of the characters appearing in the two. 
         If the frequencies of every letter match exactly, then only sl 's permutation can be a substring of 82. 
         In order to implement this approach, instead of sorting and then comparing the elements for equality, we make use of a hashmap slmap which stores the frequency of occurence of all the characters in the short string sl. 
-        We consider every possible substring of s2 of the same length as that of sl. find its corresponding hashmap as well, namely s2map. 
+        We consider every possible substring of s2 of the same length as that of sl. find its corresponding hashmap as well, namely s2_map. 
         Thus, the substrings considered can be viewed as a window of length as that of sl iterating over s2. 
         If the two hashmaps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
     
     Algorithm:
         1. Store the frequency of occurence of all the characters of the short string s1 in the hashmap slmap.
         2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
-            For every such substring, store the frequency of occurence of all the characters of the substring in the hashmap s2map.
+            For every such substring, store the frequency of occurence of all the characters of the substring in the hashmap s2_map.
         3. If the two hashmaps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
 
     Complexity Analysis:
@@ -176,35 +176,35 @@ private:
 */
 
 #include <unordered_map>
-#include <string>
-using namespace std;
 
 class Solution {
 public:
     bool checkInclusion(string s1, string s2) 
     {
         if (s1.length() > s2.length()) return false;
-        unordered_map<char, int> s1map;
-        for (int i = 0; i < s1.length(); i++) s1map[s1[i]]++;
+
+        unordered_map<char, int> s1_map;
+        for (int i = 0; i < s1.length(); i++) s1_map[s1[i]]++;
+
         for (int i = 0; i <= s2.length() - s1.length(); i++) 
         {
-            unordered_map<char, int> s2map;
+            unordered_map<char, int> s2_map;
             for (int j = 0; j < s1.length(); j++) 
             {
-                s2map[s2[i + j]]++;
+                s2_map[s2[i + j]]++;
             }
-            if (matches(s1map, s2map)) return true;
+            if (matches(s1_map, s2_map)) return true;
         }
         return false;
     }
 
 private:
-    bool matches(unordered_map<char, int>& s1map, unordered_map<char, int>& s2map) 
+    bool matches(unordered_map<char, int>& s1_map, unordered_map<char, int>& s2_map) 
     {
-        for (auto& pair : s1map) 
+        for (auto& pair : s1_map) 
         {
             char key = pair.first;
-            if (s1map[key] != s2map[key]) return false;
+            if (s1_map[key] != s2_map[key]) return false;
         }
         return true;
     }
@@ -220,9 +220,9 @@ private:
     
     Algorithm:
         // like pseudocode with some code:
-        1. Store the frequency of occurence of all the characters of the short string s1 in the array s1map.
+        1. Store the frequency of occurence of all the characters of the short string s1 in the array s1_map.
         2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
-            For every such substring, store the frequency of occurence of all the characters of the substring in the array s2map.
+            For every such substring, store the frequency of occurence of all the characters of the substring in the array s2_map.
         3. If the two arrays obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
         4. To compare the two arrays, we compare the frequency of occurence of each character. 
             Since there can be a total of 26 characters only, we can compare the two arrays in constant time.
@@ -232,43 +232,45 @@ private:
         Let l1 be the length of string s1 and l2 be the length of string s2.
         • Time complexity: 0(l1 + 26l1(12 — l1)).
         • Space complexity: 0(1).
-            s1map & s2map of size 26 is used.
+            s1_map & s2_map of size 26 is used.
 */
 
-#include <iostream>
 #include <vector>
-#include <string>
-
 class Solution {
 public:
     bool checkInclusion(string s1, string s2) {
         if (s1.length() > s2.length()) return false;
         
         // Vector/Array instead of HashMap
-        vector<int> s1vector(26, 0);
-        vector<int> s2vector(26, 0);
+        vector<int> s1_vector(26, 0);
+        vector<int> s2_vector(26, 0);
         
+        // i < s1.length() because it's enough to 
+        // check only first s1.length() characters as it's the shortest string
         for (int i = 0; i < s1.length(); i++) 
         {
-            s1vector[s1[i] - 'a']++;
-            s2vector[s2[i] - 'a']++;
+            s1_vector[s1[i] - 'a']++;
+            s2_vector[s2[i] - 'a']++;
         }
         
+
+        // s2.length() - s1.length() because we need to 
+        // check all the substrings of s2 having length equal to the length of s1
         for (int i = 0; i < s2.length() - s1.length(); i++) 
         {
-            if (matches(s1vector, s2vector)) return true;
-            s2vector[s2[i + s1.length()] - 'a']++;
-            s2vector[s2[i] - 'a']--;
+            if (matches(s1_vector, s2_vector)) return true;
+            s2_vector[s2[i + s1.length()] - 'a']++;
+            s2_vector[s2[i] - 'a']--;
         }
         
-        return matches(s1vector, s2vector);
+        return matches(s1_vector, s2_vector);
     }
 
-    bool matches(vector<int>& s1map, vector<int>& s2vector) 
+    bool matches(vector<int>& s1_vector, vector<int>& s2_vector) 
     {
         for (int i = 0; i < 26; i++) 
         {
-            if (s1map[i] != s2vector[i]) return false;
+            if (s1_vector[i] != s2_vector[i]) return false;
         }
         return true;
     }
@@ -283,9 +285,9 @@ public:
         The rest of the process remains the same as the last approach.
     
     Algorithm:
-        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1map.
+        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1_map.
         2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
-            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2map.
+            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2_map.
         3. If the two maps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
         4. To compare the two maps, we compare the frequency of occurence of each character. 
             Since there can be a total of 26 characters only, we can compare the two maps in constant time.
@@ -300,43 +302,45 @@ public:
 #include <string>
 #include <unordered_map>
 
-class Solution 
+class Solution
 {
 public:
-    bool checkInclusion(string s1, string s2) 
+    bool checkInclusion(const std::string &s1, const std::string &s2)
     {
         if (s1.length() > s2.length()) return false;
-        
-        unordered_map<char, int> s1map;
-        for (char c : s1) s1map[c]++;
-        
-        for (int i = 0; i <= s2.length() - s1.length(); ++i) 
+
+        // Create frequency maps for both strings 
+        std::vector<int> s1map(26, 0);
+        std::vector<int> s2map(26, 0);
+
+        for (int i = 0; i < s1.length(); ++i)
         {
-            unordered_map<char, int> s2map;
-            for (int j = 0; j < s1.length(); ++j) 
-            {
-                s2map[s2[i + j]]++;
-            }
-            
-            if (matches(s1map, s2map)) return true;
+            s1map[s1[i] - 'a']++;
+            s2map[s2[i] - 'a']++;
         }
-        
-        return false;
+
+        // Sliding window approach.
+        for (int i = 0; i + s1.length() - 1 < s2.length(); ++i)
+        {
+            if (matches(s1map, s2map)) return true;
+
+            // Update frequency map based on sliding window.
+            s2map[s2[i + s1.length()] - 'a']++;
+            s2map[s2[i] - 'a'];
+        }
+
+        // Check for a match at the end.
+        return matches(s1map, s2map);
     }
 
-    bool matches(const unordered_map<char, int>& s1map, const unordered_map<char, int>& s2map) 
+    // Check if both frequency maps are equal.
+    bool matches(const std::vector<int> &s1map, const std::vector<int> &s2map)
     {
-        for (int i = 0; i < 26; i++) 
+        for (int i = 0; i < 26; ++i)
         {
             if (s1map[i] != s2map[i]) return false;
         }
         return true;
-        // OR
-        /* for (const auto& [key, value] : s1map) 
-        {
-            if (s2map[key] != value) return false;
-        }
-        return true; */
     }
 };
 
@@ -344,14 +348,14 @@ public:
 
 /* 
     Intuition:
-        The last approach can be optimized, if instead of comparing all the elements of the hashmaps for every updated s2maps2maps2map corresponding to every window of s2s2s2 considered, we keep a track of the number of elements which were already matching in the earlier hashmap and update just the count of matching elements when we shift the window towards the right.
+        The last approach can be optimized, if instead of comparing all the elements of the hashmaps for every updated s2_map corresponding to every window of s2 considered, we keep a track of the number of elements which were already matching in the earlier hashmap and update just the count of matching elements when we shift the window towards the right.
 
-        To do so, we maintain a countcountcount variable, which stores the number of characters(out of the 26 alphabets), which have the same frequency of occurence in s1s1s1 and the current window in s2s2s2. When we slide the window, if the deduction of the last element and the addition of the new element leads to a new frequency match of any of the characters, we increment the countcountcount by 1. If not, we keep the countcountcount intact. But, if a character whose frequency was the same earlier(prior to addition and removal) is added, it now leads to a frequency mismatch which is taken into account by decrementing the same countcountcount variable. If, after the shifting of the window, the countcountcount evaluates to 26, it means all the characters match in frequency totally. So, we return a True in that case immediately.
+        To do so, we maintain a countcountcount variable, which stores the number of characters(out of the 26 alphabets), which have the same frequency of occurence in s1s1s1 and the current window in s2. When we slide the window, if the deduction of the last element and the addition of the new element leads to a new frequency match of any of the characters, we increment the countcountcount by 1. If not, we keep the countcountcount intact. But, if a character whose frequency was the same earlier(prior to addition and removal) is added, it now leads to a frequency mismatch which is taken into account by decrementing the same countcountcount variable. If, after the shifting of the window, the countcountcount evaluates to 26, it means all the characters match in frequency totally. So, we return a True in that case immediately.
     
     Algorithm:
-        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1map.
+        1. Store the frequency of occurence of all the characters of the short string s1 in the map s1_map.
         2. Consider every possible substring of the long string s2 having length equal to the length of s1. 
-            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2map.
+            For every such substring, store the frequency of occurence of all the characters of the substring in the map s2_map.
         3. If the two maps obtained are identical for any such window, we can conclude that s1's permutation is a substring of s2, otherwise not.
         4. To compare the two maps, we compare the frequency of occurence of each character. 
             Since there can be a total of 26 characters only, we can compare the two maps in constant time.
@@ -366,40 +370,45 @@ public:
 #include <string>
 #include <unordered_map>
 
-class Solution
+class Solution 
 {
-    public:
-    bool check_include(string s1, string s2)
+public:
+    bool checkInclusion(string s1, string s2) 
     {
         if (s1.length() > s2.length()) return false;
-        
-        unordered_map<char, int> s1map;
-        unordered_map<char, int> s2map;
-        for(int i = 0; i < s1.length(); i++)
-        {
-            s1map[s1[i]]++;
-            s2map[s2[i]]++;
-        }
-        int count = 0;
-        for(int i = 0; i < 26; i++)
-        {
-            if(s1map[i] == s2map[i]) count++;
-        }
-        for(int i = 0; i < s2.length() - s1.length(); i++)
-        {
-            if(count == 26) return true;
+            
 
-            int r = s2[i + s1.length()] - 'a';
-            int l = s2[i] - 'a';
-            
-            s2map[r]++;
-            if(s2map[r] == s1map[r]) count++;
-            else if(s2map[r] == s1map[r] + 1) count--;
-            
-            s2map[l]--;
-            if(s2map[l] == s1map[l]) count++;
-            else if(s2map[l] == s1map[l] - 1) count--;
+        std::vector<int> s1_vector(26, 0);
+        std::vector<int> s2_vector(26, 0);
+
+        for (size_t i = 0; i < s1.length(); ++i) 
+        {
+          s1_vector[s1[i] - 'a']++;
+          s2_vector[s2[i] - 'a']++;
         }
+
+        int count = 0;
+        for (int i = 0; i < 26; ++i) 
+        {
+            if (s1_vector[i] == s2_vector[i]) count++;
+        }
+
+        for (size_t i = 0; i < s2.length() - s1.length(); ++i) 
+        {
+          int l = s2[i] - 'a';
+          int r = s2[i + s1.length()] - 'a';
+
+          if (count == 26) return true;
+
+          s2_vector[r]++;
+          if (s2_vector[r] == s1_vector[r]) count++;
+          else if (s2_vector[r] == s1_vector[r] + 1) count--;
+
+          s2_vector[l]--;
+          if (s2_vector[l] == s1_vector[l]) count++;
+          else if (s2_vector[l] == s1_vector[l] - 1) count--;
+        }
+
         return count == 26;
     }
 };

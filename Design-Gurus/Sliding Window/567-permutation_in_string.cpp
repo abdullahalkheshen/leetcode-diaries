@@ -234,48 +234,50 @@ private:
         • Space complexity: 0(1).
             s1_map & s2_map of size 26 is used.
 */
-
-#include <vector>
-class Solution {
+class Solution
+{
 public:
-    bool checkInclusion(string s1, string s2) {
+    bool checkInclusion(string s1, string s2)
+    {
         if (s1.length() > s2.length()) return false;
-        
-        // Vector/Array instead of HashMap
-        vector<int> s1_vector(26, 0);
-        vector<int> s2_vector(26, 0);
-        
-        // i < s1.length() because it's enough to 
-        // check only first s1.length() characters as it's the shortest string
-        for (int i = 0; i < s1.length(); i++) 
-        {
-            s1_vector[s1[i] - 'a']++;
-            s2_vector[s2[i] - 'a']++;
-        }
-        
 
-        // s2.length() - s1.length() because we need to 
-        // check all the substrings of s2 having length equal to the length of s1
-        for (int i = 0; i < s2.length() - s1.length(); i++) 
+        vector<int> s1map(26, 0);
+        vector<int> s2map(26, 0);
+
+        for (char c : s1) s1map[c - 'a']++;
+
+        // Sliding window approach to iterate through s2
+        for (int i = 0; i <= s2.length() - s1.length(); i++)
         {
-            if (matches(s1_vector, s2_vector)) return true;
-            s2_vector[s2[i + s1.length()] - 'a']++;
-            s2_vector[s2[i] - 'a']--;
+            // Update s2map with character frequencies in the current window
+            for (int j = 0; j < s1.length(); j++)
+            {
+                s2map[s2[i + j] - 'a']++;
+            }
+
+            // Compare s1map and s2map to see if they match
+            if (matches(s1map, s2map)) return true;
+                
+
+            // Shift the window and update s2map
+            for (int j = 0; j < s1.length(); j++)
+            {
+                s2map[s2[i + j] - 'a']--;
+            }
         }
-        
-        return matches(s1_vector, s2_vector);
+
+        return false;
     }
 
-    bool matches(vector<int>& s1_vector, vector<int>& s2_vector) 
+    bool matches(vector<int> &s1map, vector<int> &s2map)
     {
-        for (int i = 0; i < 26; i++) 
+        for (int i = 0; i < 26; i++)
         {
-            if (s1_vector[i] != s2_vector[i]) return false;
+            if (s1map[i] != s2map[i]) return false;
         }
         return true;
     }
 };
-
 // ------------------------------------------------ Solution 5: Using Sliding Window ------------------------------------------------
 
 /* 
@@ -310,35 +312,35 @@ public:
         if (s1.length() > s2.length()) return false;
 
         // Create frequency maps for both strings 
-        std::vector<int> s1map(26, 0);
-        std::vector<int> s2map(26, 0);
+        std::vector<int> s1_vector(26, 0);
+        std::vector<int> s2_vector(26, 0);
 
         for (int i = 0; i < s1.length(); ++i)
         {
-            s1map[s1[i] - 'a']++;
-            s2map[s2[i] - 'a']++;
+            s1_vector[s1[i] - 'a']++;
+            s2_vector[s2[i] - 'a']++;
         }
 
         // Sliding window approach.
         for (int i = 0; i + s1.length() - 1 < s2.length(); ++i)
         {
-            if (matches(s1map, s2map)) return true;
+            if (matches(s1_vector, s2_vector)) return true;
 
             // Update frequency map based on sliding window.
-            s2map[s2[i + s1.length()] - 'a']++;
-            s2map[s2[i] - 'a'];
+            s2_vector[s2[i + s1.length()] - 'a']++;
+            s2_vector[s2[i] - 'a'];
         }
 
         // Check for a match at the end.
-        return matches(s1map, s2map);
+        return matches(s1_vector, s2_vector);
     }
 
     // Check if both frequency maps are equal.
-    bool matches(const std::vector<int> &s1map, const std::vector<int> &s2map)
+    bool matches(const std::vector<int> &s1_vector, const std::vector<int> &s2_vector)
     {
         for (int i = 0; i < 26; ++i)
         {
-            if (s1map[i] != s2map[i]) return false;
+            if (s1_vector[i] != s2_vector[i]) return false;
         }
         return true;
     }
@@ -377,11 +379,10 @@ public:
     {
         if (s1.length() > s2.length()) return false;
             
-
         std::vector<int> s1_vector(26, 0);
         std::vector<int> s2_vector(26, 0);
 
-        for (size_t i = 0; i < s1.length(); ++i) 
+        for (size_t i = 0; i < s1.length(); i++) 
         {
           s1_vector[s1[i] - 'a']++;
           s2_vector[s2[i] - 'a']++;

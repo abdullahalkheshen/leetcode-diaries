@@ -52,7 +52,7 @@
         Three functions are used in this approach:
         1. swap(string, index_1, index_2) - This function swaps the elements of the string at index_1 and index_2.
         2. permute(string_1, string_2, current_index) - This function generates all the permutations of string_1 and checks if any of the permutations is a substring of string_2.
-        3. checkInclusion(string_1, string_2) - This function is the main function which checks if any of the permutations of string_1 is a substring of string_2.
+        3. findPermutation(string_1, string_2) - This function is the main function which checks if any of the permutations of string_1 is a substring of string_2.
 
     Complexity Analysis:
         Let n be the length of sl
@@ -71,7 +71,7 @@ class Solution
 public:
     bool flag = false;
     
-    bool checkInclusion(string s1, string s2) 
+    bool findPermutation(string s1, string s2) 
     {
         permute(s1, s2, 0);
         return flag;
@@ -132,7 +132,7 @@ public:
 #include <algorithm>
 class Solution {
 public:
-    bool checkInclusion(string s1, string s2) 
+    bool findPermutation(string s1, string s2) 
     {
         s1 = sort_string(s1);
         for (int i = 0; i <= static_cast<int>(s2.length()) - static_cast<int>(s1.length()); ++i) 
@@ -179,7 +179,7 @@ public:
 
 class Solution {
 public:
-    bool checkInclusion(string s1, string s2) 
+    bool findPermutation(string s1, string s2) 
     {
         if (s1.length() > s2.length()) return false;
 
@@ -210,6 +210,42 @@ private:
     }
 };
 
+// Or
+
+class Solution
+{
+public:
+    static bool findPermutation(const string &s1, const string &pattern)
+    {
+        int matched = 0;
+        int windowStart = 0;
+        
+        unordered_map<char, int> s1_map;
+        for (auto chr : pattern) s1_map[chr]++;
+
+        for (int window_end = 0; window_end < s1.length(); window_end++)
+        {
+            if (s1_map.find(s1[window_end]) != s1_map.end())
+            {
+                s1_map[s1[window_end]]--;
+                if (s1_map[s1[window_end]] == 0) matched++;
+            }
+
+            if (matched == (int)s1_map.size()) return true;
+
+            if (window_end >= pattern.length() - 1)
+            {
+                if (s1_map.find(s1[windowStart++]) != s1_map.end())
+                {
+                    if (s1_map[s1[windowStart++]] == 0) matched--;
+                    s1_map[s1[windowStart++]]++;
+                }
+            }
+        }
+        return false;
+    }
+};
+
 // ------------------------------------------------ Solution 4: Using Array ------------------------------------------------
 
 /* 
@@ -237,7 +273,7 @@ private:
 class Solution
 {
 public:
-    bool checkInclusion(string s1, string s2)
+    bool findPermutation(string s1, string s2)
     {
         if (s1.length() > s2.length()) return false;
 
@@ -307,7 +343,7 @@ public:
 class Solution
 {
 public:
-    bool checkInclusion(const std::string &s1, const std::string &s2)
+    bool findPermutation(const std::string &s1, const std::string &s2)
     {
         if (s1.length() > s2.length()) return false;
 
@@ -375,7 +411,7 @@ public:
 class Solution 
 {
 public:
-    bool checkInclusion(string s1, string s2) 
+    bool findPermutation(string s1, string s2) 
     {
         if (s1.length() > s2.length()) return false;
             

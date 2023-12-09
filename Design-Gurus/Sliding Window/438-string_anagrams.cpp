@@ -27,3 +27,46 @@
     Output: [2, 3, 4]  
     Explanation: The three anagrams of the pattern in the given string are "bca", "cab", and "abc".
 */
+
+using namespace std;
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+class Solution 
+{
+    public:
+    vector<int> findAnagrams(string s, string p) 
+    {
+        int matched = 0;
+        int window_start = 0;
+        
+        unordered_map<char, int> map;
+        for(auto chr : p) map[chr]++;
+
+        vector<int> v;
+
+        for(int window_end = 0; window_end < s.size(); window_end++)
+        {
+            if(map.find(s[window_end]) != map.end())
+            {
+                map[s[window_end]]--;
+                if(map[s[window_end]] == 0) matched++;
+            }
+
+            if(matched == (int)map.size()) v.push_back(window_start);
+
+            if(window_end >= p.length()-1)
+            {
+                if(map.find(s[window_start]) != map.end())
+                {
+                    if(map[s[window_start]] == 0) matched--;
+                    map[s[window_start]]++;
+                }
+                window_start++;
+            }
+        }
+        return v;
+    }
+};

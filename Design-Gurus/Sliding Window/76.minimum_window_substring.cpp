@@ -49,6 +49,8 @@ class Solution
             if(map.find(s[window_end]) != map.end())
             {
                 map[s[window_end]]--;
+                // If it is, matched is incremented. 
+                // This means that this character is one of the characters we are looking for, because its original count in the map was positive.
                 if(map[s[window_end]] >= 0) matched++;
             }
 

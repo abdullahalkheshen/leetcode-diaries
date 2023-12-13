@@ -139,61 +139,66 @@ public:
 };
 
 // ----------------------------- Sliding Window 2 -------------------------------- //
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <utility>
+#include <climits>
 
 class Solution {
 public:
-    std::string minWindow(std::string s, std::string t) 
-    {
-        if (s.length() == 0 || t.length() == 0) 
-        {
+    std::string minWindow(std::string s, std::string t) {
+        if (s.length() == 0 || t.length() == 0) {
             return "";
         }
 
         std::unordered_map<char, int> dictT;
-        for (char c : t) 
-        {
+        for (char c : t) {
             dictT[c]++;
         }
 
         int required = dictT.size();
-        int l = 0, r = 0;
-        int formed = 0;
-        int ans[3] = { -1, 0, 0 };
-        std::unordered_map<char, int> windowCounts;
 
-        while (r < s.length()) 
-        {
-            char c = s[r];
+        std::vector<std::pair<int, char>> filteredS;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s[i];
+            if (dictT.find(c) != dictT.end()) {
+                filteredS.push_back(std::make_pair(i, c));
+            }
+        }
+
+        int l = 0, r = 0, formed = 0;
+        std::unordered_map<char, int> windowCounts;
+        int ans[3] = { -1, 0, 0 };
+
+        while (r < filteredS.size()) {
+            char c = filteredS[r].second;
             windowCounts[c]++;
 
-            if (dictT.find(c) != dictT.end() && windowCounts[c] == dictT[c]) 
-            {
+            if (dictT.find(c) != dictT.end() && windowCounts[c] == dictT[c]) {
                 formed++;
             }
 
-            while (l <= r && formed == required) 
-            {
-                c = s[l];
-                if (ans[0] == -1 || r - l + 1 < ans[0]) 
-                {
-                    ans[0] = r - l + 1;
-                    ans[1] = l;
-                    ans[2] = r;
+            while (l <= r && formed == required) {
+                c = filteredS[l].second;
+
+                int end = filteredS[r].first;
+                int start = filteredS[l].first;
+                if (ans[0] == -1 || end - start + 1 < ans[0]) {
+                    ans[0] = end - start + 1;
+                    ans[1] = start;
+                    ans[2] = end;
                 }
 
                 windowCounts[c]--;
-
-                if (dictT.find(c) != dictT.end() && windowCounts[c] < dictT[c]) 
-                {
+                if (dictT.find(c) != dictT.end() && windowCounts[c] < dictT[c]) {
                     formed--;
                 }
-
                 l++;
             }
-
             r++;
         }
-
         return ans[0] == -1 ? "" : s.substr(ans[1], ans[2] - ans[1] + 1);
     }
 };

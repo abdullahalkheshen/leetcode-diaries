@@ -40,7 +40,7 @@ class Solution
     {
         int matched = 0;
         int window_start = 0;
-        int minimum_window = s.size()+1; // Maximum possible value for minimum window
+        int minimum_window_size = s.size()+1; // Maximum possible value for minimum window
         int min_window_start = 0;
         
         unordered_map<char, int> map;
@@ -59,10 +59,10 @@ class Solution
             while(matched == (int)p.size())
             {   
                 // If it is, that means the current window is smaller than the smallest window found so far.
-                if(minimum_window > window_end - window_start + 1)
+                if(minimum_window_size > window_end - window_start + 1)
                 {
                     min_window_start = window_start;
-                    minimum_window = window_end - window_start + 1;
+                    minimum_window_size = window_end - window_start + 1;
                 }
 
                 if(map.find(s[window_start]) != map.end())
@@ -70,10 +70,11 @@ class Solution
                     if(map[s[window_start]] == 0) matched--;
                     map[s[window_start]]++;
                 }
+                
                 window_start++;
             }
         }
-        return (minimum_window > s.size()) ? "" : s.substr(min_window_start, minimum_window);
+        return (minimum_window_size > s.size()) ? "" : s.substr(min_window_start, minimum_window_size);
     }
 };
 

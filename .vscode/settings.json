@@ -4,6 +4,8 @@
         "*.cpp": "cpp",
         "ios": "cpp",
         "iostream": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "xstring": "cpp",
+        "algorithm": "cpp"
     }
 }

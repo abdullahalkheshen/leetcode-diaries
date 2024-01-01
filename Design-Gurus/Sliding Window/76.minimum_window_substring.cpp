@@ -1,4 +1,6 @@
 /* 
+    This's the hardest problem I've passen through so far.
+    
     Leetcode: 76. Minimum Window Substring
     Problem Challenge 3: Smallest Window containing Substring (hard)
 

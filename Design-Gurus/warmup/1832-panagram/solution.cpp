@@ -1,190 +1,218 @@
-/* Panagram (Easy)
-Problem Statement:
-Given a string sentence containing English letters (lower- or upper-case), return true if sentence is a Pangram, or false otherwise.
+/**
+ * Problem: 1832. Check if the Sentence Is Pangram
+ * Link: https://leetcode.com/problems/check-if-the-sentence-is-pangram/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: Hash Table, String
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
 
-A Pangram is a sentence where every letter of the English alphabet appears at least once.
-
-Note: The given sentence might contain other characters like digits or spaces, your solution should handle these too.
-
-Example 1:
-Input: sentence = "TheQuickBrownFoxJumpsOverTheLazyDog"
-Output: true
-Explanation: The sentence contains at least one occurrence of every letter of the English alphabet either in lower or upper case.
-
-Example 2:
-Input: sentence = "This is not a pangram"
-Output: false
-Explanation: The sentence doesn't contain at least one occurrence of every letter of the English alphabet. */
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #1 Brute Force (Find Letters One By One)
 /*
-Intuition:
-The straightforward way is to check the presence of each letter one by one.
-We first iterate over sentence to find "a", then we iterate again to find "b", and so on.
-If we manage to find all 26 letters, then sentence is a pangram, otherwise, it is not.
+    Problem Statement:
+    Given a string sentence containing English letters (lower- or upper-case),
+    return true if sentence is a Pangram, or false otherwise.
 
-Algorithm:
-For each lowercase letter current_character from a to z, iterate over sentence to check if it contains the letter current_character.
-If we cannot find one of the letters, return False. Otherwise, return True after we finish all the iterations.
+    A Pangram is a sentence where every letter of the English alphabet appears
+    at least once.
 
-Big-O:
-Time Complexity: O(n), Iterate over "n" chars in sentence for 26 times, with each iteration taking at most O(n).
-Space Complexity: O(1), Just need to find letters one by one. */
+    Note: The given sentence might contain other characters like digits or
+    spaces, your solution should handle these too.
+
+    Example 1:
+    Input: sentence = "TheQuickBrownFoxJumpsOverTheLazyDog"
+    Output: true
+    Explanation: The sentence contains at least one occurrence of every letter
+    of the English alphabet either in lower or upper case.
+
+    Example 2:
+    Input: sentence = "This is not a pangram"
+    Output: false
+    Explanation: The sentence doesn't contain at least one occurrence of every
+    letter of the English alphabet.
+
+    Constraints:
+    - 1 <= sentence.length <= 1000
+    - sentence consists of lowercase and/or uppercase English letters
+*/
 
 #include <iostream>
+#include <string>
 #include <unordered_set>
-#include <ctype.h>
-using namespace std;
+#include <unordered_map>
+#include <array>
+#include <cctype>
 
-class Solution
-{
+// ---------------------------------------------------------------------------
+
+// Approach #1: Brute Force (Find Letters One By One)
+
+/*
+    Intuition:
+    The straightforward way is to check the presence of each letter one by one.
+    We first iterate over sentence to find "a", then we iterate again to find
+    "b", and so on.
+
+    Algorithm:
+    1. For each lowercase letter from 'a' to 'z', iterate over sentence to check
+       if it contains the letter.
+    2. If we cannot find one of the letters, return false.
+    3. Otherwise, return true after we finish all the iterations.
+
+    Complexity Analysis:
+    - Time: O(26 * n) = O(n), iterate over n chars in sentence for 26 times
+    - Space: O(1), just need to find letters one by one
+*/
+
+class SolutionBruteForce {
 public:
-    bool isPanagram(string sentence)
-    {
-        for (int i = 0; i < 26; i++)
-        {
+    bool is_pangram(std::string sentence) {
+        for (int i = 0; i < 26; i++) {
             char current_character = 'a' + i;
-            if (sentence.find(current_character) == string::npos)
+            if (sentence.find(current_character) == std::string::npos &&
+                sentence.find(std::toupper(current_character)) == std::string::npos) {
                 return false;
+            }
         }
         return true;
     }
 };
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// Approach #2 Set
+// Approach #2: HashSet
+
 /*
-Intuition: We can use a HashSet to check if the given sentence is a pangram or not. The HashSet will be used to store all the unique characters in the sentence.
+    Intuition:
+    We can use a HashSet to store all the unique characters in the sentence.
+    If the set contains all 26 letters, it's a pangram.
 
-Algorithm:
-1. Converts the sentence to lowercase.
-2. Iterate over each character of the sentence using a loop.
-3. Add each character to the HashSet.
-4. After looping through all characters, compare the size of the HashSet with 26 (total number of alphabets). If the size of the HashSet is equal to 26, it means the sentence contains all the alphabets and is a pangram, so the function will return true. Otherwise, it will return false.
+    Algorithm:
+    1. Convert the sentence to lowercase.
+    2. Iterate over each character of the sentence.
+    3. Add each alphabetic character to the HashSet.
+    4. Compare the size of the HashSet with 26.
 
-Big-O:
-Time complexity: O(n) where n is the number of characters in the sentence because it iterates over each character once
-Space complexty: O(1) because the HashSet can store at most 26 characters.
+    Complexity Analysis:
+    - Time: O(n), where n is the number of characters in the sentence
+    - Space: O(1), because the HashSet can store at most 26 characters
 */
 
-#include <string>
-class Solution
-{
+class Solution {
 public:
-    // Function to check if given sentence is pangram
-    bool isPanagram(string sentence)
-    {
-        unordered_set<char> unique_set;
+    bool is_pangram(std::string sentence) {
+        std::unordered_set<char> unique_set;
 
-        for (char current_character : sentence)
-            if (isalpha(current_character))
-                unique_set.insert(tolower(current_character));
+        for (char current_character : sentence) {
+            if (std::isalpha(current_character)) {
+                unique_set.insert(std::tolower(current_character));
+            }
+        }
+
         return unique_set.size() == 26;
     }
-
-    // Or equivalent one-liner (without for loop):
-    /* unordered_set<char> unique_set(sentence.begin(), sentence.end());
-    return unique_set.size() == 26; */
 };
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// Approach 3 Frequency counter (Vector or Array)
+// Approach #3: Frequency Counter (Array)
 
 /*
-Intuition:
-Note that each letter of alphabets has its own ASCII code, we map their ASCII codes to a unique number.
+    Intuition:
+    Each letter of the alphabet has its own ASCII code. We can map their ASCII
+    codes to a unique index in an array.
 
-Algorithm:
-1. Initialize an empty vector/array of size 26.
-2. Iterate over sentence, for each character current_character, we let the value at the mapped index equal true.
-3. Once we finish the iteration, check if every value of seen equal true.
+    Algorithm:
+    1. Initialize an empty array of size 26.
+    2. Iterate over sentence, for each character, mark the corresponding index
+       as true.
+    3. Check if every value in the array is true.
 
-Big-O:
-Time complexity: O(n), we calculate the ASCII of current letter and update the value at the mapped index.
-Space complexity: O(1), We use an array of size 26. Thus the space complexity is O(1).
+    Complexity Analysis:
+    - Time: O(n), we iterate through the sentence once
+    - Space: O(1), we use an array of size 26
 */
 
-#include <array>
-#include <vector>
-class Solution
-{
+class SolutionArray {
 public:
-    bool isPanagram(string sentence)
-    {
-        array<bool, 26> alphabets{};
+    bool is_pangram(std::string sentence) {
+        std::array<bool, 26> alphabets{};
 
-        for (auto current_character : sentence)
-            alphabets[current_character - 'a'] = true;
+        for (char current_character : sentence) {
+            if (std::isalpha(current_character)) {
+                alphabets[std::tolower(current_character) - 'a'] = true;
+            }
+        }
 
-        for (auto status : alphabets)
-            if (!status)
-                return false;
+        for (bool status : alphabets) {
+            if (!status) return false;
+        }
+
         return true;
     }
 };
 
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// Approach #4 Map
+// Approach #4: HashMap
 
 /*
-Intuition:
-To determine if a sentence is a pangram (contains all letters of the alphabet), we can count the occurrences of each letter using a hashmap.
-If all letters from 'a' to 'z' have at least one occurrence in the sentence, it's a pangram.
+    Intuition:
+    To determine if a sentence is a pangram, we can count the occurrences of
+    each letter using a hashmap. If all letters from 'a' to 'z' have at least
+    one occurrence, it's a pangram.
 
-Algorithm:
-1. Create an unordered_map to count occurrences of each letter.
-2. Iterate through the given sentence and update the counts in the hashmap.
-3. Check if all letters from 'a' to 'z' have at least one occurrence in the hashmap.
-4. If any letter is missing, return false (not a pangram). Otherwise, return true.
+    Algorithm:
+    1. Create an unordered_map to count occurrences of each letter.
+    2. Iterate through the sentence and update the counts.
+    3. Check if all letters from 'a' to 'z' have at least one occurrence.
 
-Big-O:
-Time complexity: O(n) to iterate through the sentence and mark each letter as seen in the hashmap.
-Space complexity: O(26) to store the hashmap.
-
+    Complexity Analysis:
+    - Time: O(n), to iterate through the sentence
+    - Space: O(1), at most 26 entries in the hashmap
 */
-#include <unordered_map>
 
-class Solution
-{
+class SolutionHashMap {
 public:
-    bool isPanagram(string sentence)
-    {
-        unordered_map<char, int> unordered_map;
+    bool is_pangram(std::string sentence) {
+        std::unordered_map<char, int> char_count;
 
-        for (auto &&character : sentence)
-            unordered_map[character]++;
-
-        for (char character = 'a'; character < 'z'; character++)
-        {
-            if (unordered_map[character] == 0)
-                return false;
+        for (char character : sentence) {
+            if (std::isalpha(character)) {
+                char_count[std::tolower(character)]++;
+            }
         }
+
+        for (char c = 'a'; c <= 'z'; c++) {
+            if (char_count[c] == 0) return false;
+        }
+
         return true;
     }
 };
 
-// OR
+// ---------------------------------------------------------------------------
 
-class Solution
-{
-public:
-    bool isPanagram(string sentence)
-    {
-        unordered_map<char, bool> unordered_map;
-        for (auto &&character : sentence)
-        {
-            if (isalpha(character))
-                unordered_map[character] = true;
+// Test Cases
+int main() {
+    Solution sol;
 
-            for (char character = 'a'; character < 'z'; character++)
-                if (!unordered_map[character])
-                    return false;
-            return true;
-        }
-    }
-};
+    // Test 1
+    bool result1 = sol.is_pangram("TheQuickBrownFoxJumpsOverTheLazyDog");
+    std::cout << "Test 1: " << (result1 == true ? "PASS" : "FAIL") << std::endl;
+
+    // Test 2
+    bool result2 = sol.is_pangram("This is not a pangram");
+    std::cout << "Test 2: " << (result2 == false ? "PASS" : "FAIL") << std::endl;
+
+    // Test 3
+    bool result3 = sol.is_pangram("abcdefghijklmnopqrstuvwxyz");
+    std::cout << "Test 3: " << (result3 == true ? "PASS" : "FAIL") << std::endl;
+
+    // Test 4
+    bool result4 = sol.is_pangram("abcdefghijklmnopqrstuvwxy");
+    std::cout << "Test 4: " << (result4 == false ? "PASS" : "FAIL") << std::endl;
+
+    return 0;
+}

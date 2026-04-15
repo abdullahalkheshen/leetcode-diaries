@@ -1,10 +1,22 @@
+/**
+ * Problem: 234. Palindrome Linked List
+ * Link: https://leetcode.com/problems/palindrome-linked-list/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: Linked List, Two Pointers, Stack, Recursion, Fast-Slow Pointers
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
+
 /*
-    Leetcode name: 234. Palindrome Linked List
+    Problem Statement:
+    Given the head of a Singly LinkedList, write a method to check if the LinkedList 
+    is a palindrome or not.
 
-    Problem Statement
-    Given the head of a Singly LinkedList, write a method to check if the LinkedList is a palindrome or not.
-
-    Your algorithm should use constant space and the input LinkedList should be in the original form once the algorithm is finished. The algorithm should have O(N) time complexity where ‘N’ is the number of nodes in the LinkedList.
+    Your algorithm should use constant space and the input LinkedList should be in 
+    the original form once the algorithm is finished. The algorithm should have O(N) 
+    time complexity where 'N' is the number of nodes in the LinkedList.
 
     Example 1:
     Input: 2 -> 4 -> 6 -> 4 -> 2 -> null
@@ -13,212 +25,201 @@
     Example 2:
     Input: 2 -> 4 -> 6 -> 4 -> 2 -> 2 -> null
     Output: false
+
+    Constraints:
+    - The number of nodes in the list is in the range [1, 10^5].
+    - 0 <= Node.val <= 9
 */
 
-// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <vector>
 
-// Approach #1 Iterative with Fast and Slow Pointers
+// ---------------------------------------------------------------------------
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode* next) : val(x), next(next) {}
+};
+
+// ---------------------------------------------------------------------------
+
+// Approach #1: Iterative with Fast and Slow Pointers
 
 /*
     Intuition:
-        The problem asks us to determine if a given singly-linked list is a palindrome. We can solve this problem by reversing the second half of the linked list and comparing it with the first half.
-        If both halves are identical, the linked list is a palindrome.
+    We can solve this problem by reversing the second half of the linked list and 
+    comparing it with the first half. If both halves are identical, the linked list 
+    is a palindrome.
 
     Algorithm:
-        1. Check if the given linked list is empty or contains only one element. If so, return `true` since a single node is always a palindrome.
-        2. Initialize two pointers, `slow_pointer` and `fast_pointer`, both starting at the head of the linked list.
-            The `slow_pointer` moves one step at a time, and the `fast_pointer` moves two steps at a time. This is done to find the middle of the linked list.
-        3. Once the `fast_pointer` reaches the end of the list (or null), the `slow_pointer` will be pointing to the middle node.
-        4. Reverse the second half of the linked list starting from the `slow_pointer`.
-        5. Reset the `fast_pointer` back to the head of the linked list.
-        6. Compare the values of each node in the first half (from the head to the middle) with the corresponding nodes in the reversed second half (from the middle to the end).
-        7. If all comparisons are equal, return `true` as the linked list is a palindrome. Otherwise, return `false`.
+    1. Check if the given linked list is empty or contains only one element.
+    2. Initialize two pointers, slow_pointer and fast_pointer, both starting at head.
+    3. Once fast_pointer reaches the end, slow_pointer will be at the middle node.
+    4. Reverse the second half of the linked list starting from slow_pointer.
+    5. Compare the values of each node in the first half with the reversed second half.
+    6. If all comparisons are equal, return true.
 
-    Complexity Analysis
-    • Time complexity : O(n), where n is the number of nodes in the Linked List.
-        Finding the middle is O(n), reversing a list in place is O(n), and then comparing the 2 resulting Linked Lists is also O(n).
-    
-    • Space complexity : 0(1).
-        -> We are changing the next pointers for half of the nodes. This was all memory that had already been allocated, so we are not using any extra memory and therefore it is 0(1).
-        -> It may look to be O(n) because we're creating a new list. It's incorrect, because we are changing each of the pointers one-by-one, in-place. 
-        -> We are not needing to allocate more than 0(1) extra memory to do this work, and there is 0(1) stack frames going on the stack. It is the same as reversing the values in an Array in place (using the two-pointer technique).
-        -> The downside of this approach is that in a concurrent environment (multiple threads and processes accessing the same data).
-            Access to the Linked List by other threads or processes would have to be locked while this function is running, because the Linked List is temporarily broken.
-            This is a limitation of many in-place algorithms though. 
+    Complexity Analysis:
+    - Time: O(n) - Finding middle, reversing, and comparing are all O(n).
+    - Space: O(1) - We are changing pointers in-place.
 */
 
-using namespace std;
-
-class Solution
-{
+class Solution {
 public:
-    struct ListNode
-    {
-        int val;
-        ListNode *next;
-        ListNode() : val(0), next(nullptr) {}
-        ListNode(int x) : val(x), next(nullptr) {}
-        ListNode(int x, ListNode *next) : val(x), next(next) {}
-    };
+    bool is_palindrome(ListNode* head) {
+        if (head == nullptr || head->next == nullptr) return true;
 
-    ListNode *reverse_linkedlist(ListNode *head)
-    {
+        ListNode* slow_pointer = head;
+        ListNode* fast_pointer = head;
 
-        ListNode *previous = nullptr;
-        ListNode *current = nullptr;
-        ListNode *next = head;
-        while (current)
-        {
-            // slide the three pointers
-            previous = current;
-            current = next;
-            next = next->next;
-            current->next = previous;
-        }
-        head = current;
-        return head;
-    }
-    // OR
-    /* ListNode* reverse_linkedlist(ListNode* head) {
-    ListNode* previous = nullptr;
-    ListNode* current = head;
-    while (current)
-    {
-        ListNode* next = current->next;
-        current->next = previous;
-        previous = current;
-        current = next;
-    }
-    return previous;
-    } */
-
-    bool isPalindrome(ListNode *head)
-    {
-        if (!head || !head->next) return true;
-
-        ListNode *slow_pointer = head;
-        ListNode *fast_pointer = head;
-
-        while (fast_pointer && fast_pointer->next)
-        {
+        while (fast_pointer != nullptr && fast_pointer->next != nullptr) {
             slow_pointer = slow_pointer->next;
             fast_pointer = fast_pointer->next->next;
         }
 
-        if (fast_pointer) slow_pointer = slow_pointer->next;
+        if (fast_pointer != nullptr) {
+            slow_pointer = slow_pointer->next;
+        }
 
-        ListNode *middle_pointer = slow_pointer;
-        middle_pointer = reverse_linkedlist(middle_pointer);
+        ListNode* second_half = reverse_linkedlist(slow_pointer);
+        ListNode* first_half = head;
 
-        fast_pointer = head; // THIS IS CRUCIAL AND CRITICAL AS IS RESTORE HEAD ON FAST POINTER
-
-        while (middle_pointer)
-        {
-            if (middle_pointer->val != fast_pointer->val) return false;
-            else
-            {
-                middle_pointer = middle_pointer->next;
-                fast_pointer = fast_pointer->next;
+        while (second_half != nullptr) {
+            if (second_half->val != first_half->val) {
+                return false;
             }
+            second_half = second_half->next;
+            first_half = first_half->next;
         }
         return true;
     }
+
+private:
+    ListNode* reverse_linkedlist(ListNode* head) {
+        ListNode* previous = nullptr;
+        ListNode* current = head;
+        
+        while (current != nullptr) {
+            ListNode* next = current->next;
+            current->next = previous;
+            previous = current;
+            current = next;
+        }
+        return previous;
+    }
 };
 
-
-// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // Approach #2: Recursive with One Pointer
 
-/* 
+/*
     Intuition:
-
-    The recursive approach utilizes the divide-and-conquer strategy to efficiently check whether a linked list is a palindrome. 
-    It divides the list into two halves and recursively checks each half for palindromicity. 
-    This approach is similar to the merge sort algorithm, where the list is recursively divided until it reaches base cases of single elements or empty lists, which are trivially palindromes.
+    The recursive approach utilizes the divide-and-conquer strategy to efficiently 
+    check whether a linked list is a palindrome. It divides the list into two halves 
+    and recursively checks each half for palindromicity.
 
     Algorithm:
-        1. `checkPalindrome(head, target, isEven)`: This recursive function takes three arguments:
-                - `head`: The current node of the linked list to be checked.
-                - `target`: A pointer that traverses the second half of the list in reverse order.
-                - `isEven`: A boolean flag indicating whether the linked list has an even or odd number of nodes.
-            
-            The function performs the following steps:
-            a. Base case: If `head` has reached the `target` node, it indicates the end of the second half. If `isEven` is false, it means the middle node has been skipped, and the function returns `true`. Otherwise, it returns `true` if the current node's value matches the target node's value, indicating a palindrome.
-            b. Recursive call: If the `target` node still exists, the function recursively checks the palindrome property for the remaining nodes in the first half of the list.
-            c. Value comparison: If the current node's value matches the target node's value, it indicates a palindrome, and the function continues checking the next pair of nodes.
-            d. Failure case: If any value mismatch occurs or the `target` node becomes `nullptr`, the function returns `false`, indicating that the linked list is not a palindrome.
-
-        2. `isPalindrome(head)`: This function initiates the recursive check for the entire linked list.
-            a. It finds the middle node of the linked list using the two-pointer approach.
-            b. It determines whether the linked list has an even or odd number of nodes based on the position of the middle node.
-            c. It calls the `checkPalindrome` function to recursively check the palindrome property for the first half of the list, passing the middle node as the starting point of the second half.
-            d. It returns the result of the recursive call, indicating whether the entire linked list is a palindrome.
+    1. check_palindrome(head, target, is_even): Recursive function that compares nodes.
+    2. is_palindrome(head): Initiates the recursive check for the entire linked list.
 
     Complexity Analysis:
-        Time Complexity: O(n)
-            → The recursive function traverses the entire linked list once, and each recursive call involves constant time operations. 
-            → Therefore, the overall time complexity is linear to the number of nodes (n).
-        Space Complexity: O(n)
-            → In the worst case, the recursion stack can grow up to the size of the linked list, especially for unbalanced lists. 
-            → Therefore, the space complexity is also linear to the number of nodes (n).
+    - Time: O(n) - The recursive function traverses the entire linked list once.
+    - Space: O(n) - In the worst case, the recursion stack can grow up to the size of the list.
 */
 
-class Solution
-{
+class Solution_Recursive {
 public:
-    struct ListNode
-    {
-        int val;
-        ListNode *next;
-        ListNode() : val(0), next(nullptr) {}
-        ListNode(int x) : val(x), next(nullptr) {}
-        ListNode(int x, ListNode *next) : val(x), next(next) {}
-    };
+    bool is_palindrome(ListNode* head) {
+        ListNode* slow_pointer = head;
+        ListNode* fast_pointer = head;
 
-    bool checkPalindrome(ListNode *head, ListNode *&target, bool isEven)
-    {
+        while (fast_pointer != nullptr && fast_pointer->next != nullptr) {
+            slow_pointer = slow_pointer->next;
+            fast_pointer = fast_pointer->next->next;
+        }
 
-        if (head == target)
-        {
-            if (isEven == false)
+        if (fast_pointer != nullptr) {
+            slow_pointer = slow_pointer->next;
+        }
+
+        ListNode* middle = slow_pointer;
+        bool is_even = (fast_pointer != nullptr);
+
+        return check_palindrome(head, middle, is_even);
+    }
+
+private:
+    bool check_palindrome(ListNode* head, ListNode*& target, bool is_even) {
+        if (head == target) {
+            if (!is_even) {
                 target = target->next;
+            }
             return true;
         }
 
-        if (checkPalindrome(head->next, target, isEven) == false)
+        if (!check_palindrome(head->next, target, is_even)) {
             return false;
+        }
 
-        if (head && !target) return false;
+        if (head != nullptr && target == nullptr) {
+            return false;
+        }
 
-        if (head->val == target->val)
-        {
+        if (head->val == target->val) {
             target = target->next;
             return true;
         }
 
         return false;
     }
-
-    bool isPalindrome(ListNode *head)
-    {
-        ListNode *slow_pointer = head;
-        ListNode *fast_pointer = head;
-
-        while (fast_pointer && fast_pointer->next)
-        {
-            slow_pointer = slow_pointer->next;
-            fast_pointer = fast_pointer->next->next;
-        }
-
-        if (fast_pointer) slow_pointer = slow_pointer->next;
-        
-        ListNode *middle = slow_pointer;
-
-        bool isEven = (fast_pointer) ? true : false;
-
-        return checkPalindrome(head, middle, isEven);
-
-        return true;
-    }
 };
+
+// ---------------------------------------------------------------------------
+
+// Helper function to create linked list from vector
+ListNode* create_list(const std::vector<int>& values) {
+    if (values.empty()) return nullptr;
+    ListNode* head = new ListNode(values[0]);
+    ListNode* current = head;
+    for (size_t i = 1; i < values.size(); i++) {
+        current->next = new ListNode(values[i]);
+        current = current->next;
+    }
+    return head;
+}
+
+// Test Cases
+int main() {
+    Solution sol;
+    
+    // Test 1: Palindrome (odd length)
+    ListNode* head1 = create_list({2, 4, 6, 4, 2});
+    bool result1 = sol.is_palindrome(head1);
+    std::cout << "Test 1: " << (result1 == true ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 2: Not a palindrome
+    ListNode* head2 = create_list({2, 4, 6, 4, 2, 2});
+    bool result2 = sol.is_palindrome(head2);
+    std::cout << "Test 2: " << (result2 == false ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 3: Palindrome (even length)
+    ListNode* head3 = create_list({1, 2, 2, 1});
+    bool result3 = sol.is_palindrome(head3);
+    std::cout << "Test 3: " << (result3 == true ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 4: Single node
+    ListNode* head4 = create_list({1});
+    bool result4 = sol.is_palindrome(head4);
+    std::cout << "Test 4: " << (result4 == true ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 5: Two nodes - not palindrome
+    ListNode* head5 = create_list({1, 2});
+    bool result5 = sol.is_palindrome(head5);
+    std::cout << "Test 5: " << (result5 == false ? "PASS" : "FAIL") << std::endl;
+    
+    return 0;
+}

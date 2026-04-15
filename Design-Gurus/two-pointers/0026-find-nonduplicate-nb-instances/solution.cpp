@@ -1,106 +1,112 @@
+/**
+ * Problem: 26. Remove Duplicates from Sorted Array
+ * Link: https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: Array, Two Pointers
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
+
 /*
-    Leetcode name: 26. Remove Duplicates from Sorted Array.
+    Problem Statement:
+    Given an array of sorted numbers, move all non-duplicate number instances
+    at the beginning of the array in-place. The relative order of the elements
+    should be kept the same and you should not use any extra space so that the
+    solution has constant space complexity.
 
-    Problem Statement
-    Given an array of sorted numbers, move all non-duplicate number instances at the beginning of the array in-place. The relative order of the elements should be kept the same and you should not use any extra space so that the solution has constant space complexity i.e., .
-
-    Move all the unique number instances at the beginning of the array and after moving return the length of the subarray that has no duplicate in it.
+    Move all the unique number instances at the beginning of the array and after
+    moving return the length of the subarray that has no duplicate in it.
 
     Example 1:
     Input: [2, 3, 3, 3, 6, 9, 9]
     Output: 4
-    Explanation: The first four elements after moving element will be [2, 3, 6, 9].
+    Explanation: The first four elements after moving will be [2, 3, 6, 9].
 
     Example 2:
     Input: [2, 2, 2, 11]
     Output: 2
-    Explanation: The first two elements after moving elements will be [2, 11].
+    Explanation: The first two elements after moving will be [2, 11].
 
-*/
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #1  Two Pointers (Maybe Fast & Slow pointers)
-
-/*
-    Intuition:
-        ***As the input array is sorted***
-        whenever we encounter duplicates, we shift the elements left.
-        In other words, we will keep one pointer for iterating the array and one pointer for placing the next non-duplicate number.
-        So our algorithm will be to iterate the array and whenever we see a non-duplicate number we move it next to the last non-duplicate number we’ve seen.
-
-    Algorithm:
-        1. Create the fast pointer.
-        2. Start a for loop from zero to end of array.
-        3. "i" pointer (fast pointer) will keep incrementing/traversing.
-        4. "j" pointer (slow pointer) will keep track of the last non duplicate element.
-        4. if we encounter a new non duplicate at arr[i], update the original array with the new element.
-        5. Increment/Update the non duplicate pointer by 1.
-        6. After for loop end, return fast pointer.
-
-    Complexity Analysis:
-        Time Complexity: O(n)
-            where ‘n’ is the total number of elements in the given array.
-        Space Complexity: O(1)
-            The algorithm runs in constant space (It's mandatory (a condition))
+    Constraints:
+    - 1 <= nums.length <= 3 * 10^4
+    - -100 <= nums[i] <= 100
+    - nums is sorted in non-decreasing order
 */
 
 #include <iostream>
 #include <vector>
-using namespace std;
-class Solution
-{
+
+// ---------------------------------------------------------------------------
+
+// Approach #1: Two Pointers (Fast & Slow)
+
+/*
+    Intuition:
+    Since the input array is sorted, whenever we encounter duplicates, we can
+    shift the elements left. We keep one pointer for iterating the array and
+    one pointer for placing the next non-duplicate number.
+
+    Algorithm:
+    1. Initialize a slow pointer j = 1 (position for next unique element).
+    2. Iterate through the array with fast pointer i.
+    3. If nums[i] != nums[j-1], it's a new unique element.
+    4. Copy it to position j and increment j.
+    5. Return j as the count of unique elements.
+
+    Complexity Analysis:
+    - Time: O(n), single pass through the array
+    - Space: O(1), constant space (in-place modification)
+*/
+
+class Solution {
 public:
-    static int remove(vector<int> &arr)
-    {
+    int remove_duplicates(std::vector<int>& nums) {
+        if (nums.empty()) return 0;
+
         int j = 1;
-        for (int i = 0; i < arr.size(); i++)
-        {
-            if (arr[j - 1] != arr[i])
-            {
-                arr[j++] = arr[i];
+
+        for (size_t i = 1; i < nums.size(); i++) {
+            if (nums[i] != nums[j - 1]) {
+                nums[j++] = nums[i];
             }
         }
+
         return j;
     }
 };
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-/*
-    Intuition:
-        Use two pointers to maintain the next available position and the current element. If the current element is not equal to the previous element, copy the current element to the next available position and increment the next available position.
+// Test Cases
+int main() {
+    Solution sol;
 
+    // Test 1
+    std::vector<int> nums1 = {2, 3, 3, 3, 6, 9, 9};
+    int result1 = sol.remove_duplicates(nums1);
+    std::cout << "Test 1: " << (result1 == 4 ? "PASS" : "FAIL") << std::endl;
 
-    Algorithm:
-        1. The variable j is used to keep track of the next position to insert a unique element into the array.
-            It is initialized to 0 because we assume that the first element of the array is unique.
-        2. The for loop iterates over the array from index 0 to index nums.size() - 2.
-            Inside the for loop, we compare the current element of the array to the next element.
-            If the two elements are not equal, then we copy the current element to the position pointed to by j and increment j.
-        3. After the for loop finishes iterating, j will point to the position of the last unique element in the array.
-        4. The function returns j + 1.
+    // Test 2
+    std::vector<int> nums2 = {2, 2, 2, 11};
+    int result2 = sol.remove_duplicates(nums2);
+    std::cout << "Test 2: " << (result2 == 2 ? "PASS" : "FAIL") << std::endl;
 
-    Complexity Analysis:
-        Time complexity: O(n)
-            where n is the length of the array, since we need to iterate over the array once.
-        Space complexity: O(1)
-            since we only need two pointers.
-*/
+    // Test 3: No duplicates
+    std::vector<int> nums3 = {1, 2, 3, 4, 5};
+    int result3 = sol.remove_duplicates(nums3);
+    std::cout << "Test 3: " << (result3 == 5 ? "PASS" : "FAIL") << std::endl;
 
-class Solution
-{
-public:
-    int removeDuplicates(vector<int> &nums)
-    {
-        int j = 0;
-        for (int i = 1; i < nums.size(); i++)
-        {
-            if (nums[j] != nums[i])
-            {
-                nums[++j] = nums[i];
-            }
-        }
-        return j + 1;
-    }
-};
+    // Test 4: All same
+    std::vector<int> nums4 = {1, 1, 1, 1};
+    int result4 = sol.remove_duplicates(nums4);
+    std::cout << "Test 4: " << (result4 == 1 ? "PASS" : "FAIL") << std::endl;
+
+    // Test 5: Single element
+    std::vector<int> nums5 = {1};
+    int result5 = sol.remove_duplicates(nums5);
+    std::cout << "Test 5: " << (result5 == 1 ? "PASS" : "FAIL") << std::endl;
+
+    return 0;
+}

@@ -1,9 +1,19 @@
-/* 
-    Leetcode name: 209. Minimum Size Subarray Sum
-    Smallest Subarray With a Greater Sum (easy)
+/**
+ * Problem: 209. Minimum Size Subarray Sum
+ * Link: https://leetcode.com/problems/minimum-size-subarray-sum/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: Sliding Window, Array, Binary Search, Prefix Sum
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
 
+/*
     Problem Statement:
-    Given an array of positive integers and a number ‘S,’ find the length of the smallest contiguous subarray whose sum is greater than or equal to 'S'. Return 0 if no such subarray exists.
+    Given an array of positive integers and a number 'S,' find the length of the 
+    smallest contiguous subarray whose sum is greater than or equal to 'S'. 
+    Return 0 if no such subarray exists.
 
     Example 1:
     Input: [2, 1, 5, 2, 3, 2], S=7
@@ -18,212 +28,226 @@
     Example 3:
     Input: [3, 4, 1, 1, 6], S=8
     Output: 3
-    Explanation: Smallest subarrays with a sum greater than or equal to '8' are [3, 4, 1] or [1, 1, 6].
+    Explanation: Smallest subarrays with a sum >= '8' are [3, 4, 1] or [1, 1, 6].
+
+    Constraints:
+    - 1 <= target <= 10^9
+    - 1 <= nums.length <= 10^5
+    - 1 <= nums[i] <= 10^4
 */
 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #1 Brute force [Time Limit Exceeded]
-
-/* 
-    Intuition:
-        Do as directed in question. Find the sum for all the possible subarrays and update the {ans} as and when we get a better subarray that fulfill the requirements sum>=s  
-    
-    Algorithm:
-        1. Initialize ans = INT_MAX
-        2. Iterate the array from left to right using i:
-            o Iterate from the current element to the end of vector using j:
-                o Find the sum of elements from index i to j
-                o If sum is greater then s:
-                    o Update ans — i + 1))
-                    o Start the next ith iteration, since, we got the smallest subarray with sum 2 s starting from the current index.
-    
-    Complexity Analysis:
-        • Time complexity: O(n3).
-            o For each element of array, we find all the subarrays starting from that index which is O(n2) .
-            o Time complexity to find the sum of each subarray is O(n).
-            o Thus, the total time complexity : O(n2 * n) = O(n3)
-
-        • Space complexity: 0(1) extra space.
-*/
-
-using namespace std;
+#include <iostream>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
-int minSubArrayLen(int s, vector<int>& nums)
-{
-    int n = nums.size();
-    int ans = INT_MAX;
-    for (int i = 0; i < n; i++) {
-        for (int j = i; j < n; j++) {
-            int sum = 0;
-            for (int k = i; k <= j; k++) {
-                sum += nums[k];
-            }
-            if (sum >= s) {
-                ans = max(ans, (j - i + 1));
-                break; //Found the smallest subarray with sum>=s starting with index i, hence move to next index
-            }
-        }
-    }
-    return (ans != INT_MAX) ? ans : 0;
-}
+// ---------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #2 Enhanced Brute Force (Formula) [Accepted]
+// Approach #1: Brute Force [Time Limit Exceeded]
 
 /*
     Intuition:
-        In Approach #1, you may notice that the sum is calculated for every surarray in O(n) time. But, we could easily find the sum in 0(1) time by
-        storing the cumulative sum from the beginning(Memoization). After we have stored the cumulative sum in sums, we could easily find the sum of any subarray from i to j .
+    Find the sum for all possible subarrays and update the answer when we get 
+    a better subarray that fulfills the requirement sum >= s.
 
-    Algorithm
-        • The algorithm is similar to Approach #1.
-        • The only difference is in the way of finding the sum of subarrays:
-            o Create a vector sums of size of nums
-            o Initialize sums[O] = nums[()]
-            o Iterate over the sums vector:
-                o Update sums[i] = sums[i — 1] + nums[i]
-            o Sum of subarray from i to j is calculated as:
-                sum = sums[j] — sums[i] + nums[i], , wherein sums[j] — sums[i] is the sum from (i + l)th element to the jth element.
+    Algorithm:
+    1. Initialize ans = INT_MAX
+    2. Iterate the array from left to right using i
+    3. For each i, iterate from i to end using j
+    4. Calculate sum from index i to j
+    5. If sum >= s, update ans and break (found smallest for this i)
+    6. Return ans (or 0 if no valid subarray found)
 
-    Complexity analyis
-        • Time complexity. O(n2).
-            o Time complexity to find all the subarrays is O(n2).
-            o Sum of the subarrays is calculated in 0(1) time.
-            o Thus, the total time complexity: O(n2 * 1) O(n2)
-        • Space complexity. O(n) extra space
-            o Additional O(n) space for sums vector than in Approach #1.
+    Complexity Analysis:
+    - Time: O(n^3) - three nested loops
+    - Space: O(1) - constant extra space
 */
 
-using namespace std;
-#include <vector>
-class Solution {
+class Solution1 {
 public:
-    int minSubArrayLen(int target, vector<int>& nums) {
-        int ans = std::numeric_limits<int>::max();
-        vector<int> sums;
-        sums[0] = nums[0];
-        for (size_t i = 1; i < nums.size(); i++) 
-        {
-            sums[i] = sums[i-1] + nums[i];
-        }
-
-        for (int i = 0; i < nums.size(); i++)
-        {
-            int sum;
-            for (int j = 0; j < nums.size(); j++)
-            {
-                sum = sums[j] - sums[i] + nums[i];
-                if (sum > target) ans = min(ans, j-i+1);
+    int min_subarray_len(int s, std::vector<int>& nums) {
+        int n = nums.size();
+        int ans = INT_MAX;
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                int sum = 0;
+                for (int k = i; k <= j; k++) {
+                    sum += nums[k];
+                }
+                if (sum >= s) {
+                    ans = std::min(ans, (j - i + 1));
+                    break;
+                }
             }
-            
         }
-        return ans == numeric_limits<int>::max() ? 0 : ans;
+        return (ans != INT_MAX) ? ans : 0;
     }
 };
 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// Approach #3 Binary Search
+// Approach #2: Enhanced Brute Force with Prefix Sum
 
-/* 
-    Intuition
-        We could further improve the Approach #2 using the binary search. Notice that we find the subarray with sum s starting with an index i in O(n) time. But, we
-        could reduce the time to O(log(n)) using binary search. Note that in Approach #2, we search for subarray starting with index i, until we find sum sums[J]
-        sums[i] + nums[i] that is greater than s. So, instead of iterating linearly to find the sum, we could use binary search to find the index that is not lower than s —
-        sums(i] in the sums, which can be done using lower_bound function in C++ STL or could be implemented manually.
-
-    Algorithm
-        • Create vector sums of size n + 1 with :
-            sums[0]=0, sums[i] = sums[i — 1] + nums[i — 1].
-        • Iterate from i = 1 to n:
-            o Find the value to_find in sum required for minimum subarray starting from index i to have sum greater than s, that is: to_find s + sums[i — 1].
-            o Find the index in sums such that value at that index is not lower than the to_find value, say bound.
-            o If we find the to_find in sums, then:
-                o Size of current subarray is given by:
-                bound — (sums.begin() + i — 1)
-                o Compare ans with the current subarray size and store minimum in ans
-    
-    Complexity analysis
-        • Time complexity: O(n * log(n)).
-            o For each element in the vector, find the subarray starting from that index, and having sum greater than s using binary search. 
-                Hence, the time required is O(n) for iteration over the vector and O(log(n)) for finding the subarray for each index using binary search.
-            o Therefore, total time complexity = O(n * log(n))
-        
-        • Space complexity: O(n). Additional O(n) space for sums vector
-*/
-
-int minSubArrayLen(int s, vector<int>& nums)
-{
-    if (nums.size() == 0) return 0;
-
-    int ans = INT_MAX;
-    vector<int> sums(nums.size() + 1, 0); //size = n+1 for easier calculations
-
-    //sums[0]=0 : Meaning that it is the sum of first 0 elements
-    //sums[1]=A[0] : Sum of first 1 elements
-    //ans so on...
-
-    for (int i = 1; i <= nums.size(); i++)
-    { 
-        sums[i] = sums[i - 1] + nums[i - 1];
-    }
-        
-    for (int i = 1; i <= nums.size(); i++) 
-    {
-        int to_find = s + sums[i - 1];
-        auto bound = lower_bound(sums.begin(), sums.end(), to_find);
-        if (bound != sums.end()) ans = min(ans, static_cast<int>(bound - (sums.begin() + i - 1)));
-    }
-    return (ans != INT_MAX) ? ans : 0;
-}
-
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Approach #3 Dynamic Sliding Window 
-
-/* 
+/*
     Intuition:
-        This problem follows the Sliding Window pattern, and we can use a similar strategy as discussed in the Maximum Sum Subarray of Size K. There is one difference though: in this problem, the sliding window size is not fixed. Here is how we will solve this problem:
-    
+    Instead of calculating sum for every subarray in O(n), store cumulative sum 
+    from the beginning (memoization). Sum of subarray from i to j can be found 
+    in O(1) using: sum = sums[j] - sums[i] + nums[i].
+
     Algorithm:
-        1. First, we will add up elements from the beginning of the array until their sum
-        becomes greater than or equal to
-        2. These elements will constitute our sliding window. We are asked to find the smallest such window having a sum greater than or equal to 'S.' 
-            We will remember the length of this window as the smallest window so far.
-        3. After this, we will keep adding one element in the sliding window (i.e., slide the window ahead) in a stepwise fashion.
-        4. In each step, we will also try to shrink the window from the beginning. We will shrink the window until the window's sum is smaller than 'St again. This is needed as we intend to find the smallest window. This shrinking will also happen in multiple
-        steps; in each step, we will do two things:
-            o Check if the current window length is the smallest so far, and if so, remember its
-            length.
-            o Subtract the first element of the window from the running sum to shrink the
-            sliding window.
-    
+    1. Create prefix sum array: sums[i] = sums[i-1] + nums[i-1]
+    2. For each starting index i, iterate through ending indices j
+    3. Calculate sum using prefix sums in O(1)
+    4. Update ans when sum >= target
+
     Complexity Analysis:
-        • Time Complexity: O(n)
-            → The time complexity of the above algorithm will be O(N). The outer for loop runs for all elements, and the inner whilé loop processes each element only once.
-            therefore, the time complexity of the algorithm will be O(N + N), which is asymptotically equivalent to O(n).
-        
-        • Space Complexity: O(1)
-            → The algorithm runs in constant space 0(1).
+    - Time: O(n^2) - two nested loops, O(1) sum calculation
+    - Space: O(n) - for prefix sum array
 */
 
-int minSubArrayLen(int s, vector<int>& nums)
-{
-    
-    int ans = INT_MAX;
-    int sum = 0;
-    int window_start = 0;
-    for (int window_end = 0; window_end < nums.size(); window_end++) 
-    {
-        sum += nums[window_end];
-        while (sum >= s) 
-        {
-            ans = min(ans, window_end + 1 - window_start);
-            sum -= nums[window_start++];
+class Solution2 {
+public:
+    int min_subarray_len(int target, std::vector<int>& nums) {
+        int ans = INT_MAX;
+        std::vector<int> sums(nums.size(), 0);
+        sums[0] = nums[0];
+        
+        for (size_t i = 1; i < nums.size(); i++) {
+            sums[i] = sums[i - 1] + nums[i];
         }
+
+        for (int i = 0; i < (int)nums.size(); i++) {
+            for (int j = i; j < (int)nums.size(); j++) {
+                int sum = sums[j] - (i > 0 ? sums[i - 1] : 0);
+                if (sum >= target) {
+                    ans = std::min(ans, j - i + 1);
+                    break;
+                }
+            }
+        }
+        return ans == INT_MAX ? 0 : ans;
     }
-    return (ans != INT_MAX) ? ans : 0;
+};
+
+// ---------------------------------------------------------------------------
+
+// Approach #3: Binary Search
+
+/*
+    Intuition:
+    Using prefix sums, we can use binary search to find the smallest j such that 
+    sums[j] - sums[i-1] >= s. Since prefix sums are monotonically increasing 
+    (all positive numbers), we can use lower_bound.
+
+    Algorithm:
+    1. Create prefix sum array with sums[0] = 0 for easier calculation
+    2. For each starting index i, find target sum: to_find = s + sums[i-1]
+    3. Use binary search (lower_bound) to find smallest j where sums[j] >= to_find
+    4. Update ans with the subarray length
+
+    Complexity Analysis:
+    - Time: O(n * log(n)) - n iterations with binary search
+    - Space: O(n) - for prefix sum array
+*/
+
+class Solution3 {
+public:
+    int min_subarray_len(int s, std::vector<int>& nums) {
+        if (nums.size() == 0) return 0;
+
+        int ans = INT_MAX;
+        std::vector<int> sums(nums.size() + 1, 0);
+
+        for (int i = 1; i <= (int)nums.size(); i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+            
+        for (int i = 1; i <= (int)nums.size(); i++) {
+            int to_find = s + sums[i - 1];
+            auto bound = std::lower_bound(sums.begin(), sums.end(), to_find);
+            if (bound != sums.end()) {
+                ans = std::min(ans, static_cast<int>(bound - (sums.begin() + i - 1)));
+            }
+        }
+        return (ans != INT_MAX) ? ans : 0;
+    }
+};
+
+// ---------------------------------------------------------------------------
+
+// Approach #4: Dynamic Sliding Window
+
+/*
+    Intuition:
+    Use a sliding window that expands when sum < s and shrinks when sum >= s.
+    This follows the Sliding Window pattern similar to Maximum Sum Subarray of Size K,
+    but with variable window size.
+
+    Algorithm:
+    1. Add elements from the beginning until sum >= s
+    2. Record the window length as smallest so far
+    3. Try to shrink the window from the left while sum >= s
+    4. At each shrink step, update the minimum length
+    5. Continue sliding until the end of array
+
+    Complexity Analysis:
+    - Time: O(n) - each element is visited at most twice (added and removed)
+    - Space: O(1) - constant space
+*/
+
+class Solution4 {
+public:
+    int min_subarray_len(int s, std::vector<int>& nums) {
+        int ans = INT_MAX;
+        int sum = 0;
+        int window_start = 0;
+        
+        for (int window_end = 0; window_end < (int)nums.size(); window_end++) {
+            sum += nums[window_end];
+            while (sum >= s) {
+                ans = std::min(ans, window_end + 1 - window_start);
+                sum -= nums[window_start++];
+            }
+        }
+        return (ans != INT_MAX) ? ans : 0;
+    }
+};
+
+// ---------------------------------------------------------------------------
+
+// Test Cases
+int main() {
+    Solution4 sol;
+    
+    // Test 1
+    std::vector<int> arr1 = {2, 1, 5, 2, 3, 2};
+    int result1 = sol.min_subarray_len(7, arr1);
+    std::cout << "Test 1: " << (result1 == 2 ? "PASS" : "FAIL") 
+              << " (got: " << result1 << ")" << std::endl;
+    
+    // Test 2
+    std::vector<int> arr2 = {2, 1, 5, 2, 8};
+    int result2 = sol.min_subarray_len(7, arr2);
+    std::cout << "Test 2: " << (result2 == 1 ? "PASS" : "FAIL") 
+              << " (got: " << result2 << ")" << std::endl;
+    
+    // Test 3
+    std::vector<int> arr3 = {3, 4, 1, 1, 6};
+    int result3 = sol.min_subarray_len(8, arr3);
+    std::cout << "Test 3: " << (result3 == 3 ? "PASS" : "FAIL") 
+              << " (got: " << result3 << ")" << std::endl;
+    
+    // Test 4 - No valid subarray
+    std::vector<int> arr4 = {1, 1, 1, 1, 1};
+    int result4 = sol.min_subarray_len(100, arr4);
+    std::cout << "Test 4: " << (result4 == 0 ? "PASS" : "FAIL") 
+              << " (got: " << result4 << ")" << std::endl;
+    
+    // Test 5 - Entire array needed
+    std::vector<int> arr5 = {1, 2, 3, 4, 5};
+    int result5 = sol.min_subarray_len(15, arr5);
+    std::cout << "Test 5: " << (result5 == 5 ? "PASS" : "FAIL") 
+              << " (got: " << result5 << ")" << std::endl;
+    
+    return 0;
 }

@@ -1,13 +1,25 @@
+/**
+ * Problem: 259. 3Sum Smaller
+ * Link: https://leetcode.com/problems/3sum-smaller/
+ * Platform: Design-Gurus
+ * Difficulty: Medium
+ * Tags: Array, Two Pointers, Binary Search, Sorting
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
+
 /*
-    Leetcode name: 259. 3Sum Smaller premium
-    Problem Statement
-    Given an vector arr of unsorted numbers and a target sum, count all triplets in it such that arr[i] + arr[j] + arr[k] < target where i, j, and k are three different indices. 
-    Write a function to return the count of such triplets.
+    Problem Statement:
+    Given an array of unsorted numbers and a target sum, count all triplets in
+    it such that arr[i] + arr[j] + arr[k] < target where i, j, and k are three
+    different indices. Write a function to return the count of such triplets.
 
     Example 1:
     Input: [-1, 0, 2, 3], target=3
     Output: 2
-    Explanation: There are two triplets whose sum is less than the target: [-1, 0, 3], [-1, 0, 2]
+    Explanation: There are two triplets whose sum is less than the target:
+    [-1, 0, 3], [-1, 0, 2]
 
     Example 2:
     Input: [-1, 4, 2, 1, 3], target=5
@@ -15,218 +27,154 @@
     Explanation: There are four triplets whose sum is less than the target:
     [-1, 1, 4], [-1, 1, 3], [-1, 1, 2], [-1, 2, 3]
 
-*/
-
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #1: Brute Force
-
-/*
-    Intuition:
-        Find every possible set of triplets (i,j,k) such that i<j<k and test for the condition.
-
-    Algorithm:
-        1. Triple for loops
-        2. if(nums[i] + nums[j] + nums[k] < target) add/insert into triplet.
-
-    Complexity analysis
-        • Time complexity: O(n^3).
-        • Space complexity: 0(1).
-*/
-
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach: #2 Binary Search
-
-/*
-    Intuition
-        Before we solve the threeSum problem, solve this simpler twoSum version:
-        Given a nums vector, find the number of index pairs i, j with 0 i < j < n that satisfy the condition: nums[i] + nums[j] < target
-        If we sort the vector first then we can apply binary search to find the largest index j such that nums[il +
-        nums[j) < target for each i. Once we have found that largest index j, we know there must be j — i pairs that satisfy the above condition with i •s value fixed.
-        Finally. we can now apply the twoSum solution to threeSum directly by wrapping an outer for-loop around it.
-
-        *Note:
-        In this binary search we choose the upper middle element (left+right+1)/2 instead of the lower middle element (left+right)/2.
-        The reason is due to the terminating condition when there are two elements left:
-         -> If we chose the lower middle element and the condition nums[mid] < target evaluates to true, then the loop would never terminate. 
-         ->Choosing the upper middle element will guarantee termination.
-    
-    Algorithm:
-
-    Complexity analysis
-        • Time complexity: O(n2*logn).
-            -> The binarySearch function takes O(logn) time, therefore the twoSumSmaller takes O(n^2 * logn) time.
-
-        • Space complexity. 0(1) because no additional data structures are used.
-
+    Constraints:
+    - n == nums.length
+    - 0 <= n <= 3500
+    - -100 <= nums[i] <= 100
+    - -100 <= target <= 100
 */
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
-using namespace std;
-class Solution
-{
+
+// ---------------------------------------------------------------------------
+
+// Approach #1: Binary Search
+
+/*
+    Intuition:
+    Sort the array first. For each pair (i, j), use binary search to find the
+    largest index k such that nums[i] + nums[j] + nums[k] < target.
+
+    Algorithm:
+    1. Sort the array.
+    2. For each i, call twoSumSmaller for the remaining array.
+    3. In twoSumSmaller, for each j, binary search for the largest valid k.
+    4. Count all valid triplets.
+
+    Complexity Analysis:
+    - Time: O(n^2 log n), binary search for each pair
+    - Space: O(1), excluding sorting space
+*/
+
+class SolutionBinarySearch {
 public:
-    int threeSumSmaller(vector<int> &nums, int target)
-    {
-        sort(begin(nums), end(nums));
+    int three_sum_smaller(std::vector<int>& nums, int target) {
+        std::sort(nums.begin(), nums.end());
         int count = 0;
-        for (int i = 0; i < nums.size() - 2; i++)
-        {
-            count += twoSumSmaller(nums, i + 1, target - nums[i]);
+
+        for (size_t i = 0; i < nums.size(); i++) {
+            count += two_sum_smaller(nums, i + 1, target - nums[i]);
         }
+
         return count;
     }
 
 private:
-    int twoSumSmaller(vector<int> &nums, int startIndex, int target)
-    {
+    int two_sum_smaller(std::vector<int>& nums, int start_index, int target) {
         int count = 0;
-        for (int i = startIndex; i < nums.size() - 1; i++)
-        {
-            int j = binarySearch(nums, i, target - nums[i]);
+
+        for (size_t i = start_index; i < nums.size() - 1; i++) {
+            int j = binary_search(nums, i, target - nums[i]);
             count += j - i;
         }
+
         return count;
     }
 
-    int binarySearch(vector<int> &nums, int startIndex, int target)
-    {
-        int left = startIndex;
+    int binary_search(std::vector<int>& nums, int start_index, int target) {
+        int left = start_index;
         int right = nums.size() - 1;
-        while (left < right)
-        {
+
+        while (left < right) {
             int mid = (left + right + 1) / 2;
-            if (nums[mid] < target) left = mid;
-            else right = mid - 1;
+            if (nums[mid] < target) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
         }
+
         return left;
     }
 };
 
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-// Approach 3: Two Pointers
+// Approach #2: Two Pointers (Optimal)
 
 /*
     Intuition:
-        Let us try sorting the vector first. For example. nums = (3, 5, 2, 8, 1] becomes [1, 2, 3, 5, 8).
-        Let us look at an example nums = [1, 2, 3, 5, 81, and target = 7.
-        [1, 2, 3, 5, 8]
-         ↑           ↑
-         left       right
-        Let us initialize two indices, left and right pointing to the first and last element respectively.
-        When we look at the sum of first and last element. it is 1 + 8 = 9, which is 2 target. That tells us no index pair will
-        ever contain the index right. So the next logical step is to move the right pointer one step to its left.
-        [1, 2, 3, 5, 8]
-         ↑        ↑
-         left    right
-        Now the pair sum is 1 -+- 5 6, which is less than target. How many pairs with one of the index left that satisfy
-        the condition? You can tell by the difference between right and left which is 3, namely (1, 2), (1, 3), and (1, 5).
-        Therefore, we move left one step to its right.
+    Sort the array. For each element, use two pointers to find all pairs that
+    form a valid triplet. When we find a valid pair, all elements between left
+    and right also form valid triplets.
 
     Algorithm:
-        1. The method searchTriplets starts by sorting the input vector arr in ascending order.
-         Sorting is important as it allows us to move our pointers based on the sum we are getting and how close we are to the target sum.
-        
-        2. The variable count is initialized to keep track of the total number of triplets found.
-        
-        3. The function then iterates through arr using a for loop, stopping when it is two positions from the end of arr (arr.size() - 2).
-             This is because we are always looking for triplets and thus don't need to consider the last two positions in this loop.
-        
-        4. Inside the for loop, we call the searchPair function with the vector, the target value minus the current element, and the current index.
-         This function will find all pairs within the vector from index first+1 to the end of the vector whose sum with arr[i] is less than target. 
-         The return value, which is the count of such pairs, is added to count.
-        
-        5.The searchPair function initializes two pointers: left to first+1 and right to the last element in the vector.
-         It then enters a while loop that continues as long as left is less than right.
-        
-        6. In the loop, if the sum of the elements at the left and right indices is less than targetSum, this means we have found a valid pair, because adding arr[first] would still result in a sum less than target.
-         Since the vector is sorted, all the elements between left and right with arr[first] will also form valid triplets. So, we add all these pairs to our count by adding right - left to count.
-        
-        7. We then increment left to move towards higher numbers in the vector.
-        
-        8. If the sum of the elements at left and right is not less than targetSum, we need a smaller sum.
-         Since the vector is sorted, to achieve a smaller sum, we need to reduce the value of the larger number. Hence, we decrement right.
-        
-        9. This process repeats until left and right cross, at which point we have examined all possible pairs for our current value of first.
-        
-        10. Once searchPair has processed all possible pairs for the given first index, it returns the count of valid pairs.
-        
-        11. The loop in searchTriplets continues until we have tried every possible starting point for our triplet.
-        
-        12. Once all possible triplets have been considered, the searchTriplets function returns count, the total number of triplets whose sum is less than target.
+    1. Sort the array.
+    2. For each i, use two pointers (left, right) for the remaining array.
+    3. If sum < target, all pairs from left to right-1 are valid.
+    4. Add (right - left) to count and increment left.
+    5. If sum >= target, decrement right.
 
-    Complexity analysis
-        • Time complexity: O(n2).
-            -> twoSumSmaller takes O(n) at most since it touches each element in the vector once. 
-                It's parent function threeSumSmaller takes O(n*logn) to sort the vector, then runs a loop that touches (n — 2) elements, invoking twoSumSmaller at each iteration. 
-            -> Therefore, the overall time complexity is O(nlogn + n2), which boils down to O(n2).
-
-        • Space complexity: 0(1) because no additional data structures are used.
-
+    Complexity Analysis:
+    - Time: O(n^2), sorting + two pointers for each element
+    - Space: O(1), excluding sorting space
 */
 
-class Solution
-{
+class Solution {
 public:
-    int threeSumSmaller(vector<int>& nums, int target)
-    {
-        sort(nums.begin(), nums.end());
-        int count = 0;
-        for (int i = 0; i < nums.size() - 2; i++)
-        {
-            count += twoSumSmaller(nums, i + 1, target - nums[i]);
-        }
-        return count;
-    }
-
-private:
-    int twoSumSmaller(vector<int>& nums, int startIndex, int target)
-    {
-        int count = 0;
-        int left = startIndex;
-        int right = nums.size() - 1;
-        while (left < right)
-        {
-            if (nums[left] + nums[right] < target)
-            {
-                count += right - left;
-                left++;
-            }
-            else right--;                
-        }
-        return count;
-    }
-};
-
-// Or with single function:
-
-class Solution
-{
-public:
-    int threeSumSmaller(vector<int> &nums, int target)
-    {
-        sort(nums.begin(), nums.end());
+    int three_sum_smaller(std::vector<int>& nums, int target) {
         if (nums.size() < 3) return 0;
-    
+
+        std::sort(nums.begin(), nums.end());
         int count = 0;
-        for (size_t i = 0; i < nums.size(); i++)
-        {
-            int l = i + 1, r = nums.size() - 1;
-            while (l < r)
-            {
-                if (nums[i] + nums[l] + nums[r] >= target) r--;
-                else if (nums[i] + nums[l] + nums[r] < target)
-                {
-                    count = count + r - l;
-                    l++;
+
+        for (size_t i = 0; i < nums.size() - 2; i++) {
+            int left = i + 1;
+            int right = nums.size() - 1;
+
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+
+                if (sum < target) {
+                    count += right - left;
+                    left++;
+                } else {
+                    right--;
                 }
             }
-            l++;
         }
+
         return count;
     }
 };
+
+// ---------------------------------------------------------------------------
+
+// Test Cases
+int main() {
+    Solution sol;
+
+    // Test 1
+    std::vector<int> nums1 = {-1, 0, 2, 3};
+    int result1 = sol.three_sum_smaller(nums1, 3);
+    std::cout << "Test 1: " << (result1 == 2 ? "PASS" : "FAIL") << std::endl;
+
+    // Test 2
+    std::vector<int> nums2 = {-1, 4, 2, 1, 3};
+    int result2 = sol.three_sum_smaller(nums2, 5);
+    std::cout << "Test 2: " << (result2 == 4 ? "PASS" : "FAIL") << std::endl;
+
+    // Test 3: Empty array
+    std::vector<int> nums3 = {};
+    int result3 = sol.three_sum_smaller(nums3, 0);
+    std::cout << "Test 3: " << (result3 == 0 ? "PASS" : "FAIL") << std::endl;
+
+    // Test 4
+    std::vector<int> nums4 = {-2, 0, 1, 3};
+    int result4 = sol.three_sum_smaller(nums4, 2);
+    std::cout << "Test 4: " << (result4 == 2 ? "PASS" : "FAIL") << std::endl;
+
+    return 0;
+}

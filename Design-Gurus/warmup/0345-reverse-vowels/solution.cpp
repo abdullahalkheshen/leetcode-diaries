@@ -1,96 +1,147 @@
-/* https://leetcode.com/problems/reverse-vowels-of-a-string/description/
-Problem Statement
-Given a string s, reverse only all the vowels in the string and return it.
-The vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both lower and upper cases, more than once.
+/**
+ * Problem: 345. Reverse Vowels of a String
+ * Link: https://leetcode.com/problems/reverse-vowels-of-a-string/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: String, Two Pointers
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
 
-Example 1:
-Input: s= "hello"
-Output: "holle"
+/*
+    Problem Statement:
+    Given a string s, reverse only all the vowels in the string and return it.
+    The vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both
+    lower and upper cases, more than once.
 
-Example 2:
-Input: s= "AEIOU"
-Output: "UOIEA"
+    Example 1:
+    Input: s = "hello"
+    Output: "holle"
 
-Example 3:
-Input: s= "DesignGUrus"
-Output: "DusUgnGires" */
+    Example 2:
+    Input: s = "AEIOU"
+    Output: "UOIEA"
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+    Example 3:
+    Input: s = "DesignGUrus"
+    Output: "DussgnGires"
 
-// Approach #1  Two Pointers
-/* Intuition:
-We can use the two-pointer technique to traverse the string from both ends simultaneously.
-Whenever a vowel is encountered at both ends, we will swap them. The process will continue until the two pointers meet in the middle.
-
-Algorithm:
-1. We first create a static string "vowels" that contains all lowercase and uppercase vowels.
-    This is used for checking whether a character in the input string is a vowel.
-2. The reverseVowels method accepts a string 's' as an argument. The i and j pointers are initialized to the start and end of the string, respectively.
-3. We enter a while loop that continues while 'i' is less than 'j'.
-6. Keep iterating untill we find a vowel at both edges (i and j), once we've found a vowel at both the 'i' and 'j' pointers, we swap these vowels.
-7. After the swap, we increment the 'i' pointer and decrement the 'j' pointer, and continue to the next iteration of the outer while loop.
-8. After exiting the while loop, we convert the character array back to a string and return it as the result.
-
-Big-O:
--Time complexity: O(n), It might be tempting to say that there are two nested loops and hence the complexity would be O(n2).
-However, if we observe closely the pointers start and end will only traverse the index once.
-Each element of the string "s" will be iterated only once either by the left or right pointer and not both.
--Space complexity: O(1) In C++ we only need an extra temporary variable to perform the swap and hence the space complexity is O(1).*/
+    Constraints:
+    - 1 <= s.length <= 3 * 10^5
+    - s consist of printable ASCII characters
+*/
 
 #include <iostream>
 #include <string>
 #include <unordered_set>
-using namespace std;
+#include <algorithm>
 
-class Solution
-{
+// ---------------------------------------------------------------------------
+
+// Approach #1: Two Pointers with HashSet
+
+/*
+    Intuition:
+    We can use the two-pointer technique to traverse the string from both ends
+    simultaneously. Whenever a vowel is encountered at both ends, we will swap
+    them. The process will continue until the two pointers meet in the middle.
+
+    Algorithm:
+    1. Create a set containing all lowercase and uppercase vowels.
+    2. Initialize i and j pointers at the start and end of the string.
+    3. Enter a while loop that continues while i < j.
+    4. Keep iterating until we find a vowel at both edges (i and j).
+    5. Once we've found a vowel at both pointers, swap these vowels.
+    6. After the swap, increment i and decrement j.
+    7. Return the modified string.
+
+    Complexity Analysis:
+    - Time: O(n), each element is iterated only once either by left or right pointer
+    - Space: O(1), only need an extra temporary variable to perform the swap
+*/
+
+class Solution {
 public:
-    string reverseVowels(string s)
-    {
+    std::string reverse_vowels(std::string s) {
         int i = 0, j = s.length() - 1;
-        unordered_set<char> st = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
+        std::unordered_set<char> vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
 
-        while (i < j)
-        {
-            if (!st.count(s[i])) // or st.count(s[i] == 0)
+        while (i < j) {
+            if (vowels.count(s[i]) == 0)
                 i++;
-            else if (!st.count(s[j])) // or st.count(s[i] == 0)
-                j--;
-            else swap(s[i++], s[j--]);
-        }
-        return s;
-    }
-};
-
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
-// A variation/substition to the unordered_set is using a isVowel function for checking if a char is a vowel as follow:
-
-class Solution
-{
-public:
-    string reverseVowels(string s)
-    {
-        int i = 0, j = s.length() - 1;
-
-        bool isVowel(char c)
-        {
-            return c == 'a' || c == 'i' || c == 'e' || c == 'o' || c == 'u' || c == 'A' || c == 'I' || c == 'E' || c == 'O' || c == 'U';
-        }
-
-        while (i < j)
-        {
-            if (!isVowel(s[i]))
-                i++;
-            else if (!isVowel(s[j]))
+            else if (vowels.count(s[j]) == 0)
                 j--;
             else
-            {
-                swap(s[i++], s[j--]);
-            }
+                std::swap(s[i++], s[j--]);
         }
-
         return s;
     }
 };
 
-// ----------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+// Approach #2: Two Pointers with Helper Function
+
+/*
+    Intuition:
+    Same as Approach #1, but using a helper function to check if a character
+    is a vowel instead of a HashSet.
+
+    Algorithm:
+    1. Create a helper function isVowel that checks if a character is a vowel.
+    2. Use two pointers from both ends.
+    3. Swap vowels when found at both positions.
+
+    Complexity Analysis:
+    - Time: O(n)
+    - Space: O(1)
+*/
+
+class SolutionHelper {
+private:
+    bool is_vowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+               c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+    }
+
+public:
+    std::string reverse_vowels(std::string s) {
+        int i = 0, j = s.length() - 1;
+
+        while (i < j) {
+            if (!is_vowel(s[i]))
+                i++;
+            else if (!is_vowel(s[j]))
+                j--;
+            else
+                std::swap(s[i++], s[j--]);
+        }
+        return s;
+    }
+};
+
+// ---------------------------------------------------------------------------
+
+// Test Cases
+int main() {
+    Solution sol;
+
+    // Test 1
+    std::string result1 = sol.reverse_vowels("hello");
+    std::cout << "Test 1: " << (result1 == "holle" ? "PASS" : "FAIL") << std::endl;
+
+    // Test 2
+    std::string result2 = sol.reverse_vowels("AEIOU");
+    std::cout << "Test 2: " << (result2 == "UOIEA" ? "PASS" : "FAIL") << std::endl;
+
+    // Test 3
+    std::string result3 = sol.reverse_vowels("leetcode");
+    std::cout << "Test 3: " << (result3 == "leotcede" ? "PASS" : "FAIL") << std::endl;
+
+    // Test 4: No vowels
+    std::string result4 = sol.reverse_vowels("bcdfg");
+    std::cout << "Test 4: " << (result4 == "bcdfg" ? "PASS" : "FAIL") << std::endl;
+
+    return 0;
+}

@@ -1,9 +1,18 @@
-/* 
-    Leetcode name: 2461. Maximum Sum of Distinct Subarrays With Length K
-    Maximum Sum Subarray of Size K (easy)
-    
-    Problem Statement
-    Given an array of positive numbers and a positive number 'k,' find the maximum sum of any contiguous subarray of size 'k'.
+/**
+ * Problem: 2461. Maximum Sum of Distinct Subarrays With Length K
+ * Link: https://leetcode.com/problems/maximum-sum-of-distinct-subarrays-with-length-k/
+ * Platform: Design-Gurus
+ * Difficulty: Easy
+ * Tags: Sliding Window, Array, Hash Table
+ *
+ * Date Solved: YYYY-MM-DD
+ * Time Taken: XX min
+ */
+
+/*
+    Problem Statement:
+    Given an array of positive numbers and a positive number 'k,' find the maximum 
+    sum of any contiguous subarray of size 'k'.
 
     Example 1:
     Input: [2, 1, 5, 1, 3, 2], k=3 
@@ -14,85 +23,129 @@
     Input: [2, 3, 4, 1, 5], k=2 
     Output: 7
     Explanation: Subarray with maximum sum is [3, 4].
+
+    Constraints:
+    - 1 <= k <= nums.length
+    - 1 <= nums[i] <= 10^5
 */
 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Approach #1 Fixed Sliding Window
-
-/* 
-  Intuition:
-    If you observe closely, you will realize that to calculate the sum of a contiguous subarray, we can utilize the sum of the previous subarray. For this, consider each subarray as a Sliding Window of size 'k.' To calculate the sum of the next subarray, we need to slide the window ahead by one element. So to slide the window forward and calculate the sum of the new position of the sliding window, we need to do two things:
-    1. Subtract the element going out of the sliding window, i.e., subtract the first element of the window.
-    2. Add the new element getting included in the sliding window, i.e., the element coming right after the end of the window.
-    This approach will save us from re-calculating the sum of the overlapping part of the sliding window.
-
-  Algorithm:
-    The `findMaxSumSubArray()` function calculates the maximum sum of a subarray of size `k` in a given array `arr`. It works by maintaining a sliding window of size `k` and calculating the sum of the elements in the window. At each step, it slides the window forward by one element and updates the maximum sum accordingly.
-    1. Initialize two variables: `window_sum` to store the sum of the elements in the sliding window and `max_sum` to store the maximum sum of a subarray of size `k` found so far.
-    2. Initialize the `window_start` pointer to the beginning of the array.
-    3. Iterate through the array, starting at index `k - 1`:
-        * Add the next element in the array to `window_sum`.
-        * If `window_end >= k - 1`:
-            * Compare `window_sum` to `max_sum` and update `max_sum` if necessary.
-            * Subtract the element at index `window_start` from `window_sum`.
-            * Increment `window_start` by one.
-    4. Return `max_sum`.
-
-  Complexity Analysis:
-    Time Complexity: O(n)
-      → we iterates through the array once, so the time complexity is linear to the length of the array (n).
-    Space Complexity: O(1)
-      → we only uses constant memory for the `window_sum`, `max_sum`, and `window_start` variables.
-
-*/
-
-using namespace std;
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
-class Solution {
-  public:
-    static int findMaxSumSubArray(int k, const vector<int>& arr) 
-    {
+// ---------------------------------------------------------------------------
+
+// Approach #1: Fixed Sliding Window (Two-Pass)
+
+/*
+    Intuition:
+    If you observe closely, you will realize that to calculate the sum of a 
+    contiguous subarray, we can utilize the sum of the previous subarray. 
+    Consider each subarray as a Sliding Window of size 'k.' To calculate the 
+    sum of the next subarray, we need to slide the window ahead by one element:
+    1. Subtract the element going out of the sliding window (first element)
+    2. Add the new element getting included in the sliding window (element after end)
+    This approach saves us from re-calculating the sum of the overlapping part.
+
+    Algorithm:
+    1. Initialize sum with the first k elements
+    2. Set maximum to this initial sum
+    3. Slide the window: subtract outgoing element, add incoming element
+    4. Update maximum at each step
+    5. Return maximum
+
+    Complexity Analysis:
+    - Time: O(n) - we iterate through the array once
+    - Space: O(1) - only constant memory for variables
+*/
+
+class Solution1 {
+public:
+    int find_max_sum_subarray(int k, const std::vector<int>& arr) {
         int maximum = 0;
         int sum = 0;
-        for(int window_end = 0; window_end < k; window_end++) {
+        
+        for (int window_end = 0; window_end < k; window_end++) {
             sum += arr[window_end];
         }
-        maximum = max(sum, maximum);
+        maximum = std::max(sum, maximum);
 
-        for(int window_end = k; window_end < arr.size(); window_end++) {
+        for (int window_end = k; window_end < (int)arr.size(); window_end++) {
             sum -= arr[window_end - k];
             sum += arr[window_end];
-            maximum = max(sum, maximum);
+            maximum = std::max(sum, maximum);
         }
         return maximum;
     }
-};        
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+};
 
+// ---------------------------------------------------------------------------
 
-class Solution {
-  public:
-    static int findMaxSumSubArray(int k, const vector<int>& arr) 
-    {
-      int sum = 0;
-      int maximum_sum = 0;
-      int window_start = 0;
-      for (int window_end = 0; window_end < arr.size(); window_end++) 
-      {
-        sum += arr[window_end];
-        if (window_end - window_start + 1 == k) // Or window_end+1 >= k
-        {
-          maximum_sum = max(sum, maximum_sum);
-          sum -= arr[window_start++];
+// Approach #2: Fixed Sliding Window (Single-Pass)
+
+/*
+    Intuition:
+    Same as Approach #1, but we handle window initialization and sliding in 
+    a single loop by checking when the window has reached size k.
+
+    Algorithm:
+    1. Initialize window_start = 0, sum = 0, maximum_sum = 0
+    2. Iterate window_end from 0 to n-1:
+       - Add arr[window_end] to sum
+       - If window size equals k:
+         - Update maximum_sum
+         - Subtract arr[window_start] and increment window_start
+    3. Return maximum_sum
+
+    Complexity Analysis:
+    - Time: O(n) - single pass through the array
+    - Space: O(1) - constant memory usage
+
+    Note: Kth element is at index k-1, nth element is at index n-1.
+*/
+
+class Solution2 {
+public:
+    int find_max_sum_subarray(int k, const std::vector<int>& arr) {
+        int sum = 0;
+        int maximum_sum = 0;
+        int window_start = 0;
+        
+        for (int window_end = 0; window_end < (int)arr.size(); window_end++) {
+            sum += arr[window_end];
+            if (window_end - window_start + 1 == k) {
+                maximum_sum = std::max(sum, maximum_sum);
+                sum -= arr[window_start++];
+            }
         }
-      }
-      return maximum_sum;
+        return maximum_sum;
     }
 };
 
-// Reminder: Kth element is of k-1 index, nth element is of n-1 index, window_end element is of window_end-1 index and so on. 
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- 
+// ---------------------------------------------------------------------------
+
+// Test Cases
+int main() {
+    Solution1 sol1;
+    Solution2 sol2;
+    
+    // Test 1
+    std::vector<int> arr1 = {2, 1, 5, 1, 3, 2};
+    int result1 = sol1.find_max_sum_subarray(3, arr1);
+    std::cout << "Test 1 (Approach 1): " << (result1 == 9 ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 2
+    std::vector<int> arr2 = {2, 3, 4, 1, 5};
+    int result2 = sol1.find_max_sum_subarray(2, arr2);
+    std::cout << "Test 2 (Approach 1): " << (result2 == 7 ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 3 - Using Approach 2
+    int result3 = sol2.find_max_sum_subarray(3, arr1);
+    std::cout << "Test 3 (Approach 2): " << (result3 == 9 ? "PASS" : "FAIL") << std::endl;
+    
+    // Test 4 - Using Approach 2
+    int result4 = sol2.find_max_sum_subarray(2, arr2);
+    std::cout << "Test 4 (Approach 2): " << (result4 == 7 ? "PASS" : "FAIL") << std::endl;
+    
+    return 0;
+}

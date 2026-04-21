@@ -1,68 +1,49 @@
 class Solution {
 public:
-    void dfs(vector<vector<int>>& grid, int r, int c, unordered_set<string>& visited, vector<tuple<int,int>>& island1) {
-        bool rInbounds = 0 <= r && r < grid.size();
-        bool cInbounds = 0 <= c && c < grid[0].size();
-        if (!rInbounds || !cInbounds) return;
-
-        string pos = to_string(r) + "," + to_string(c);
-        if (visited.count(pos) > 0) return;
-        if (grid[r][c] == 0) return;
-
-        visited.insert(pos);
-        island1.push_back({r, c});
-
-        dfs(grid, r + 1, c, visited, island1);
-        dfs(grid, r - 1, c, visited, island1);
-        dfs(grid, r, c + 1, visited, island1);
-        dfs(grid, r, c - 1, visited, island1);
-    }
-
     int shortestBridge(vector<vector<int>>& grid) {
-        unordered_set<string> visited;
-        vector<tuple<int, int>> island1;
-
-        // Phase 1 — DFS to find Island 1
+        int n = grid.size();
+        vector<pair<int,int>> dirs = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+        queue<pair<int,int>> q;
         bool found = false;
-        for (int r = 0; r < grid.size() && !found; r++) {
-            for (int c = 0; c < grid[0].size() && !found; c++) {
-                if (grid[r][c] == 1) {
-                    dfs(grid, r, c, visited, island1);
+        
+        // DFS to find and mark the first island (change 1 to 2)
+        function<void(int, int)> dfs = [&](int r, int c) {
+            if (r < 0 || r >= n || c < 0 || c >= n || grid[r][c] != 1) return;
+            grid[r][c] = 2;  // Mark as visited (part of first island)
+            q.push({r, c});  // Add to BFS queue
+            for (auto& [dr, dc] : dirs) {
+                dfs(r + dr, c + dc);
+            }
+        };
+        
+        // Find any cell of the first island and mark the entire island
+        for (int i = 0; i < n && !found; i++) {
+            for (int j = 0; j < n && !found; j++) {
+                if (grid[i][j] == 1) {
+                    dfs(i, j);
                     found = true;
                 }
             }
         }
-
-        // Phase 2 — BFS outward from Island 1
-        queue<tuple<int, int, int>> q;
-        for (auto [r, c] : island1) {
-            q.push({r, c, -1});
-            visited.insert(to_string(r) + "," + to_string(c));
-        }
-
+        
+        // BFS from all cells of the first island to find shortest path to second island
+        int steps = 0;
         while (!q.empty()) {
-            auto [r, c, dist] = q.front();
-            q.pop();
-
-            if (grid[r][c] == 1 && dist != -1) {
-                return dist;
-            }
-
-            vector<tuple<int,int>> deltas = {{1,0},{-1,0},{0,1},{0,-1}};
-            for (auto [dr, dc] : deltas) {
-                int nr = r + dr;
-                int nc = c + dc;
-                string nPos = to_string(nr) + "," + to_string(nc);
-
-                bool rInbounds = 0 <= nr && nr < grid.size();
-                bool cInbounds = 0 <= nc && nc < grid[0].size();
-
-                if (rInbounds && cInbounds && visited.count(nPos) == 0) {
-                    visited.insert(nPos);
-                    q.push({nr, nc, dist + 1});
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                auto [r, c] = q.front();
+                q.pop();
+                for (auto& [dr, dc] : dirs) {
+                    int nr = r + dr, nc = c + dc;
+                    if (nr < 0 || nr >= n || nc < 0 || nc >= n || grid[nr][nc] == 2) continue;
+                    if (grid[nr][nc] == 1) return steps;  // Found second island
+                    grid[nr][nc] = 2;  // Mark water as visited
+                    q.push({nr, nc});
                 }
             }
+            steps++;
         }
-        return -1;
+        
+        return -1;  // Should never reach here given problem constraints
     }
 };

@@ -131,3 +131,23 @@ leetcode-diaries/
 <p align="center">
   <i>⭐ Star this repo if you find it helpful!</i>
 </p>
+
+<!---LeetCode Topics Start-->
+# LeetCode Topics
+## Array
+| Problem Name | Difficulty |
+| ------- | ------- |
+| [0934-shortest-bridge](https://github.com/abdullahalkheshen/leetcode-diaries/tree/main/0934-shortest-bridge/) | Medium |
+## Depth-First Search
+| Problem Name | Difficulty |
+| ------- | ------- |
+| [0934-shortest-bridge](https://github.com/abdullahalkheshen/leetcode-diaries/tree/main/0934-shortest-bridge/) | Medium |
+## Breadth-First Search
+| Problem Name | Difficulty |
+| ------- | ------- |
+| [0934-shortest-bridge](https://github.com/abdullahalkheshen/leetcode-diaries/tree/main/0934-shortest-bridge/) | Medium |
+## Matrix
+| Problem Name | Difficulty |
+| ------- | ------- |
+| [0934-shortest-bridge](https://github.com/abdullahalkheshen/leetcode-diaries/tree/main/0934-shortest-bridge/) | Medium |
+<!---LeetCode Topics End-->

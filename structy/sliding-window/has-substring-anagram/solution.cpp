@@ -78,30 +78,34 @@
 
 class Solution {
 public:
-    bool is_anagram(std::unordered_map<char, int>& window, std::unordered_map<char, int>& need) {
-        for (auto& [c, count] : need) {
-            if (window[c] != count) return false;
+    bool is_anagram(std::unordered_map<char, int>& window_freq, std::unordered_map<char, int>& anagram_freq) {
+        for (auto& [character, count] : anagram_freq) {
+            if (window_freq[character] != count) return false;
         }
         return true;
     }
 
     bool hasSubstringAnagram(std::string s, std::string anagram) {
-        int i = 0;
-        int j = 0;
-        std::unordered_map<char, int> need;
-        std::unordered_map<char, int> window;
+        int left = 0;
+        int right = 0;
+        std::unordered_map<char, int> anagram_freq;
+        std::unordered_map<char, int> window_freq;
 
-        for (char c : anagram) need[c]++;
+        for (char character : anagram) anagram_freq[character]++;
 
-        while (j < (int)s.size()) {
-            window[s[j]]++;
-            if (j - i + 1 == (int)anagram.size()) {
-                if (is_anagram(window, need)) return true;
-                window[s[i]]--;
-                i++;
+        while (right < (int)s.size()) {
+            window_freq[s[right]]++;
+
+            if (right - left + 1 == (int)anagram.size()) {
+                if (is_anagram(window_freq, anagram_freq)) return true;
+
+                window_freq[s[left]]--;
+                left++;
             }
-            j++;
+
+            right++;
         }
+
         return false;
     }
 };

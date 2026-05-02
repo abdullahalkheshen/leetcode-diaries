@@ -74,6 +74,7 @@ public:
             
             while (m['0'] == 1) {
                 m[nums[i]]--;
+                if (m[nums[i]] == 0) m.erase(nums[i]);
                 i++;
             }
             j++;

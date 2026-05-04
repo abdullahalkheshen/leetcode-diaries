@@ -80,6 +80,7 @@
     - Space: O(amount) — memo map stores up to `amount` entries + recursion stack.
 */
 
+using namespace std;
 class Solution {
 public:
     int minChange(int amount, std::vector<int>& coins, std::unordered_map<int, int>& memo) {

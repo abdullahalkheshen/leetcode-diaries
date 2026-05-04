@@ -80,8 +80,7 @@
 
 class Solution {
 public:
-    bool sumPossible(int amount, std::vector<int>& numbers,
-                     std::unordered_map<int, bool>& memo) {
+    bool sumPossible(int amount, std::vector<int>& numbers, std::unordered_map<int, bool>& memo) {
         if (memo.count(amount)) return memo[amount];
         if (amount == 0) return true;
         if (amount < 0) return false;

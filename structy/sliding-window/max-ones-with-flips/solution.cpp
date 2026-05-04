@@ -46,6 +46,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
 // ---------------------------------------------------------------------------
 
@@ -53,35 +54,50 @@
 
 /*
     Intuition:
-
+    We want to find the longest contiguous subarray where we can flip at most k
+    zeros to ones. This is a classic variable-size sliding window problem. We
+    expand the window by moving the right pointer and track how many zeros we've
+    encountered. When the number of zeros exceeds k, we shrink from the left until
+    we're back within the k-flip budget. The maximum window size seen is our answer.
 
     Algorithm:
-
+    1. Initialize two pointers (left and right) at the start, and a counter for zeros.
+    2. Expand the window by moving right:
+       - If nums[right] is 0, increment the zero count.
+    3. While zero count exceeds k:
+       - Shrink the window from the left.
+       - If nums[left] is 0, decrement the zero count.
+       - Increment left pointer.
+    4. Track the maximum window size (right - left + 1) at each step.
+    5. Return the maximum size found.
 
     Complexity Analysis:
-    - Time:
-    - Space:
+    - Time: O(n) — each element is visited at most twice (once by right, once by left).
+    - Space: O(1) — only using constant extra space for pointers and counters.
 */
 
 class Solution {
 public:
     int maxOnesWithFlips(std::vector<int> nums, int k) {
-        int i=0, j=0;
-        std::unordered_map<char, int> m;
+        int left = 0;
+        int zeroCount = 0;
+        int maxLength = 0;
 
-        while (j<nums.size()) {
-            m[nums[j]]++;
-            
-            while (m['0'] == 1) {
-                m[nums[i]]--;
-                if (m[nums[i]] == 0) m.erase(nums[i]);
-                i++;
+        for (int right = 0; right < nums.size(); right++) {
+            if (nums[right] == 0) {
+                zeroCount++;
             }
-            j++;
-        }
-        int longest = std::max (j-i+1, longest);
 
-        return longest;
+            while (zeroCount > k) {
+                if (nums[left] == 0) {
+                    zeroCount--;
+                }
+                left++;
+            }
+
+            maxLength = std::max(maxLength, right - left + 1);
+        }
+        return maxLength;
     }
 };
 
